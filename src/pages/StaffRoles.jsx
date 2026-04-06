@@ -93,7 +93,7 @@ export default function StaffRoles() {
 
           return (
             <div key={role.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden group hover:border-primary/20 transition-all flex flex-col hover:shadow-xl hover:shadow-slate-200/40">
-              <div className="px-6 py-5 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between gap-4">
+              <div className="px-6 py-5 bg-white border-b border-slate-100 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <Shield size={18} className="text-primary" />
