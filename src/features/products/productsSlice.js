@@ -20,6 +20,18 @@ const productsSlice = createSlice({
     setCityFilter: (state, action) => { state.cityFilter = action.payload; state.currentPage = 1; },
     setPage: (state, action) => { state.currentPage = action.payload; },
     setSelectedProperty: (state, action) => { state.selectedProperty = action.payload; },
+    addProperty: (state, action) => {
+      const newId = (state.list.length + 1).toString();
+      const newProperty = {
+        id: newId,
+        ...action.payload,
+        userId: '10002', // Priya Mehta (Current Vendor)
+        uploadedBy: 'Priya Mehta',
+        status: 'new',
+        createdAt: new Date().toISOString(),
+      };
+      state.list.unshift(newProperty);
+    },
     updatePropertyStatus: (state, action) => {
       const { id, status, rejectionReason } = action.payload;
       const prop = state.list.find(p => Number(p.id) === Number(id));
@@ -31,7 +43,7 @@ const productsSlice = createSlice({
   },
 });
 
-export const { setSearch, setTypeFilter, setStatusFilter, setCityFilter, setPage, setSelectedProperty, updatePropertyStatus } = productsSlice.actions;
+export const { setSearch, setTypeFilter, setStatusFilter, setCityFilter, setPage, setSelectedProperty, updatePropertyStatus, addProperty } = productsSlice.actions;
 
 export const selectFilteredProperties = (state) => {
   const { list, searchQuery, typeFilter, statusFilter, cityFilter } = state.products;

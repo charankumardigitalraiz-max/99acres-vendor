@@ -60,7 +60,7 @@ export default function Topbar() {
       {/* Left */}
       <div className="flex items-center gap-3">
         <div>
-          <h1 className="text-sm font-semibold text-slate-800">{pageTitle}</h1>
+          <h1 className="text-sm font-semibold text-slate-800">Seller</h1>
           <p className="text-2xs text-slate-400">Sherla Properties Vendor Panel</p>
         </div>
       </div>

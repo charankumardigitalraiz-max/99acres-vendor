@@ -22,6 +22,7 @@ import Banners from './pages/Banners';
 import Transactions from './pages/Transactions';
 import Chats from './pages/Chats';
 import Login from './pages/Login';
+import CreateProperty from './pages/CreateProperty';
 
 export default function App() {
   return (
@@ -41,6 +42,7 @@ export default function App() {
             <Route path="products" element={<Products />} />
             <Route path="products/:id" element={<ProductDetails />} />
             <Route path="properties/:id" element={<PropertyDetails />} />
+            <Route path="create-property" element={<CreateProperty />} />
             <Route path="reports" element={<Reports />} />
             <Route path="profile" element={<AdminProfile />} />
             <Route path="support" element={<Support />} />

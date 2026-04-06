@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setSearch, setTypeFilter, setStatusFilter, setCityFilter,
-  setPage, setSelectedProperty, updatePropertyStatus, selectFilteredProperties
+  setPage, setSelectedProperty, updatePropertyStatus, selectFilteredProperties, addProperty
 } from '../features/products/productsSlice';
 import Badge from '../components/ui/Badge';
-import Modal from '../components/ui/Modal';
+// import Modal from '../components/ui/Modal';
+import PropertyForm from '../components/ui/PropertyForm';
 import Select from '../components/ui/Select';
-import { Search, Filter, Download, ChevronLeft, ChevronRight, Eye, CheckCircle, XCircle, Building2, MapPin, Clock, TrendingUp } from 'lucide-react';
+import { Search, Filter, Download, ChevronLeft, ChevronRight, Eye, CheckCircle, XCircle, Building2, MapPin, Clock, TrendingUp, Plus } from 'lucide-react';
 
 const types = [
   { label: 'All Types', value: '' },
@@ -80,9 +81,17 @@ export default function Products() {
           </div>
           <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Property Management</h2>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:shadow-sm transition-all active:scale-95 shadow-sm">
-          <Download size={14} className="text-primary" /> Export Data
-        </button>
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:shadow-sm transition-all active:scale-95 shadow-sm">
+            <Download size={14} className="text-primary" /> Export Data
+          </button>
+          <button
+            onClick={() => navigate('/create-property')}
+            className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white border border-slate-900 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-primary hover:border-primary transition-all active:scale-95 shadow-xl shadow-slate-200"
+          >
+            <Plus size={14} /> Add Property
+          </button>
+        </div>
       </div>
 
       {/* Premium KPI Metrics */}
@@ -220,7 +229,7 @@ export default function Products() {
               ))}
               {paginated.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center py-20">
+                  <td colSpan={6} className="text-center py-20">
                     <div className="flex flex-col items-center justify-center text-slate-400">
                       <Building2 size={32} className="mb-4 opacity-20" />
                       <p className="text-xs font-bold uppercase tracking-widest">No property listings found</p>
@@ -264,7 +273,7 @@ export default function Products() {
           </div>
         </div>
       </div>
-
     </div>
+
   );
 }
