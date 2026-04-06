@@ -1,0 +1,199 @@
+99acrers : 
+  primary color : ##F59E0B
+  secondary gradient color : 1. #2E353A ,  2. #F59E0B
+  background color : #FFFFFF
+
+
+Admin Dahsboard
+
+   Stack : 
+     1  React JSX Formate 
+     2. Tailwind 
+     3. Redux State Management 
+
+   Screens: 
+
+     1. Dashboard Screen 
+     2. Subscription Plans Screen
+     3. Users Data Screens 
+     4. Subscribers Screen
+     5. Products Means Sites or Which Uploaded by the Subscribed user 
+     6. Reports 
+     7. Admin profile 
+
+data : 
+   
+   property post required data : 
+ 
+
+
+
+// 
+   Step 1 :  Base Details
+
+
+
+         you are :  // add this at top
+             owener, agent
+       what kind of property :  //this one add second place
+             residential, commercial
+
+
+     1. property type :
+        emum : {
+           villas,
+           home, 
+           plots, 
+           flats, 
+           commercial,         
+           indipenedent          
+           house, 
+           Appartments, 
+           Lands
+           other     
+         }      
+          
+
+     3. property Leghnth :
+
+         1. based on property
+
+     4. property title :
+
+           as per user wish , present keep any name fine 
+
+
+
+    Step 2 : Location Details       
+ 
+     5.  location of the property:
+            current location (auto detected)
+             1. city(fields)
+             2. locality, area(fields)
+             3. project/ building name (fields) 
+             4. full address (fields) 
+             5. land mark (fields)
+
+
+
+
+
+
+
+
+ Step3 : Property Pricing and Advatges
+
+     7. expexted price : 
+           as per user wish , present some amount
+
+     8. price per sqaure feet
+           auto calculated field consider to expected price 
+
+     9. maintainance chanrges : 
+            as per user maintanace of self property of user (optional)
+
+     10. price negotiable :
+            enum : {
+              true,
+              false
+            }
+          
+     11. furninshing status,
+
+     12. amenties:
+ 
+            water supply,
+            washrooms,
+            bedrooms,
+            kitchen,
+            livving room,
+            balcony,
+            parking,
+            garden,
+            terrace,
+            tv,
+            sofa
+
+     13. direction:
+ 
+            nort side, east side, west side, south side, south-east, south-west, north-east, north-west
+  
+     14. location advantages : 
+
+            close metro station, close to railway station,  close to highway, close to airport, close to market
+    15. availabilty status : 
+            enum : {
+              ready to move,
+              under construction,
+            }
+    16. available from : 
+            date 
+
+
+
+
+
+  Step 4 : Property Images and Videos 
+
+    17. smart album : {
+          Livving Room : [image1, image2, image3, ...],
+          Kitchen : [image1, image2, image3, ...],
+          Bedrooms : [image1, image2, image3, ...],
+          Washrooms : [image1, image2, image3, ...],
+          Balcony : [image1, image2, image3, ...],
+          Parking : [image1, image2, image3, ...],
+          Garden : [image1, image2, image3, ...],
+          Terrace : [image1, image2, image3, ...],
+    }
+    18.cover photo,
+     
+    19. video of the property
+
+    20. images of the property
+         can be more that more that 2 or 3
+    
+
+Step 5 : Owner/Seller Verification 
+
+
+
+    21. owner/seller verfication
+           adhaar or pan or passport
+
+     20. owner photo 
+     
+     21. propertry ownership proofs details 
+        required fields :
+          1. sale deed/title deed
+          2. Encumbrance Certificate 
+          3. Property Tax Receipt 
+        optional fields:
+          4. Legal Opinion Document
+          5. Lawyer Certificate 
+     
+      
+        
+
+
+
+
+
+for user data to show : 
+
+    1. name 
+    2. email
+    3. primary mobile number
+    4. alternative mobile number (optional, if it is there , then only        should show )
+    5. landline number (optionl if it is there , then only               should show  )
+    6. Address
+         1. city
+         2. location
+         3. address 
+
+    7. activity of user
+     
+  
+
+     
+    
+
