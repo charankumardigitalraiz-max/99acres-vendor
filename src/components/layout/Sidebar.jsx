@@ -28,7 +28,7 @@ const navItems = [
   { path: '/products', label: 'Properties', icon: Building2 },
 
   // { path: '/reports', label: 'Reports', icon: BarChart3 },
-  // { path: '/banners', label: 'Banners', icon: ImageIcon },
+  { path: '/banners', label: 'Banners', icon: ImageIcon },
   // { path: '/transactions', label: 'Transactions', icon: CreditCard },
   // { path: '/chats', label: 'Chats', icon: MessageSquare },
 
