@@ -193,21 +193,19 @@ export default function SubscriptionPlans() {
           <div className="flex-shrink-0 flex items-center gap-1 p-1 bg-slate-100 rounded-2xl border border-slate-200/60 self-start">
             <button
               onClick={() => dispatch(setBillingCycle('monthly'))}
-              className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                billingCycle === 'monthly'
-                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
-                  : 'text-slate-400 hover:text-slate-600'
-              }`}
+              className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${billingCycle === 'monthly'
+                ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
+                : 'text-slate-400 hover:text-slate-600'
+                }`}
             >
               Monthly
             </button>
             <button
               onClick={() => dispatch(setBillingCycle('annual'))}
-              className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 ${
-                billingCycle === 'annual'
-                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
-                  : 'text-slate-400 hover:text-slate-600'
-              }`}
+              className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 ${billingCycle === 'annual'
+                ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
+                : 'text-slate-400 hover:text-slate-600'
+                }`}
             >
               Annual
               <span className="text-[8px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-md">Save 10%</span>
@@ -220,11 +218,10 @@ export default function SubscriptionPlans() {
           {topUpPlans.map(tp => (
             <div
               key={tp.id}
-              className={`relative flex flex-col rounded-[2.5rem] border transition-all duration-300 overflow-hidden bg-white p-8 ${
-                tp.highlight
-                  ? 'border-primary/40 shadow-2xl shadow-primary/5 ring-1 ring-primary/20 pt-16'
-                  : topUpCardBorder[tp.badge]
-              }`}
+              className={`relative flex flex-col rounded-[2.5rem] border transition-all duration-300 overflow-hidden bg-white p-8 ${tp.highlight
+                ? 'border-primary/40 shadow-2xl shadow-primary/5 ring-1 ring-primary/20 pt-16'
+                : topUpCardBorder[tp.badge]
+                }`}
             >
               {/* Best Value ribbon — same style as Most Popular */}
               {tp.highlight && (
@@ -312,11 +309,10 @@ export default function SubscriptionPlans() {
               {/* CTA — same style as seller plan button */}
               <button
                 onClick={() => setSelectedTopUp(tp)}
-                className={`w-full py-5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${
-                  tp.highlight
-                    ? 'bg-primary text-white shadow-xl shadow-primary/30 hover:bg-slate-900'
-                    : 'bg-primary text-white border border-slate-200 hover:border-primary/30 shadow-sm hover:shadow-md'
-                }`}
+                className={`w-full py-5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${tp.highlight
+                  ? 'bg-primary text-white shadow-xl shadow-primary/30 hover:bg-slate-900'
+                  : 'bg-primary text-white border border-slate-200 hover:border-primary/30 shadow-sm hover:shadow-md'
+                  }`}
               >
                 <Plus size={14} /> Buy Top-Up Pack
               </button>
@@ -543,8 +539,12 @@ export default function SubscriptionPlans() {
                   <p className="text-[11px] text-slate-400 mt-0.5">{selectedTopUp.tagline}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-3xl font-black text-slate-900 tabular-nums">₹{selectedTopUp.price.toLocaleString()}</p>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">one-time</p>
+                  <p className="text-3xl font-black text-slate-900 tabular-nums">
+                    ₹{(billingCycle === 'annual' ? selectedTopUp.annualPrice : selectedTopUp.monthlyPrice).toLocaleString()}
+                  </p>
+                  <Badge variant={billingCycle === 'annual' ? 'primary' : 'slate'}>
+                    {billingCycle} billing
+                  </Badge>
                 </div>
               </div>
 
@@ -564,6 +564,14 @@ export default function SubscriptionPlans() {
                   </div>
                 </div>
               </div>
+              {billingCycle === 'annual' && (
+                <div className="inline-flex items-center gap-2 mt-3 px-4 py-1.5 bg-emerald-50/50 text-emerald-600 rounded-xl border border-emerald-100/50 shadow-sm">
+                  <Check size={10} strokeWidth={4} />
+                  <span className="text-[9px] font-black uppercase tracking-widest">
+                    Saving ₹{(selectedTopUp.monthlyPrice * 12 - selectedTopUp.annualPrice).toLocaleString()} vs monthly
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Feature list — same Check/X as plan cards */}
@@ -605,7 +613,7 @@ export default function SubscriptionPlans() {
               disabled={isProcessing}
               className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-primary transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait"
             >
-              {isProcessing ? 'Processing Payment...' : `Pay ₹${selectedTopUp.price.toLocaleString()} & Activate`}
+              {isProcessing ? 'Processing Payment...' : `Pay ₹${(billingCycle === 'annual' ? selectedTopUp.annualPrice : selectedTopUp.monthlyPrice).toLocaleString()} & Activate`}
             </button>
             <p className="text-[9px] text-center font-bold text-slate-400 uppercase tracking-widest">
               Secured by SherlaPay Gateway
