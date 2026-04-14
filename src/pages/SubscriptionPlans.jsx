@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Check, X, ShieldCheck, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Check, X, ShieldCheck, Zap, ChevronLeft, ChevronRight,
+  Plus, Building2, Clock, Sparkles
+} from 'lucide-react';
 import Modal from '../components/ui/Modal';
 import Badge from '../components/ui/Badge';
+import { topUpPlans } from '../data/mockData';
+import { setBillingCycle } from '../features/subscriptions/subscriptionsSlice';
 
 const planColors = {
   Basic: { badge: 'slate', ring: 'ring-slate-200', activeBg: 'bg-slate-700', light: 'bg-slate-50' },
@@ -10,11 +15,25 @@ const planColors = {
   Premium: { badge: 'blue', ring: 'ring-dark-500/30', activeBg: 'bg-dark-500', light: 'bg-slate-800' },
 };
 
+const topUpBadgeStyles = {
+  Starter: 'bg-slate-100 text-slate-600 border-slate-200',
+  Popular: 'bg-amber-50 text-amber-700 border-amber-200',
+  Premium: 'bg-slate-800 text-white border-slate-700',
+};
+
+const topUpCardBorder = {
+  Starter: 'border-slate-100 hover:border-primary/20 hover:shadow-xl hover:shadow-slate-200/40',
+  Popular: 'border-primary/40 shadow-2xl shadow-primary/5 ring-1 ring-primary/20',
+  Premium: 'border-slate-200 hover:border-slate-300 hover:shadow-xl',
+};
+
 export default function SubscriptionPlans() {
+  const dispatch = useDispatch();
   const { sellerPlans, billingCycle } = useSelector(s => s.subscriptions);
   const { allTransactions } = useSelector(s => s.dashboard);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [selectedTopUp, setSelectedTopUp] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const itemsPerPage = 8;
 
@@ -26,9 +45,18 @@ export default function SubscriptionPlans() {
 
   const plans = sellerPlans;
 
+  const handleProcessPayment = (planName, onClose) => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      onClose();
+      alert(`${planName} activated successfully!`);
+    }, 2000);
+  };
+
   return (
-    <div className="space-y-8 pb-20">
-      {/* Header Section */}
+    <div className="space-y-12 pb-20">
+      {/* ── Header ── */}
       <div className="flex xl:flex-row xl:items-center justify-between gap-8 mb-4">
         <div>
           <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
@@ -40,7 +68,7 @@ export default function SubscriptionPlans() {
         </div>
       </div>
 
-      {/* Plan Cards */}
+      {/* ── Subscription Plan Cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {plans.map(plan => {
           const pc = planColors[plan.name.includes('Premium') ? 'Premium' : plan.name.includes('Standard') ? 'Standard' : 'Basic'];
@@ -57,7 +85,7 @@ export default function SubscriptionPlans() {
             >
               {isPopular && (
                 <div className="absolute top-0 left-0">
-                  <div className="bg-primary text-white text-[9px] font-black uppercase tracking-[0.2em] px-8 py-2.5 rounded-br-2xl shadow-xl animate-in slide-in-from-left-4 duration-500">
+                  <div className="bg-primary text-white text-[9px] font-black uppercase tracking-[0.2em] px-8 py-2.5 rounded-br-2xl shadow-xl">
                     Most Popular
                   </div>
                 </div>
@@ -83,7 +111,7 @@ export default function SubscriptionPlans() {
                 </div>
 
                 {billingCycle === 'annual' && (
-                  <div className="inline-flex items-center gap-2 mt-6 px-4 py-1.5 bg-emerald-50/50 text-emerald-600 rounded-xl border border-emerald-100/50 shadow-sm backdrop-blur-sm">
+                  <div className="inline-flex items-center gap-2 mt-6 px-4 py-1.5 bg-emerald-50/50 text-emerald-600 rounded-xl border border-emerald-100/50 shadow-sm">
                     <Check size={10} strokeWidth={4} />
                     <span className="text-[9px] font-black uppercase tracking-widest">Efficiency Savings: ₹{(plan.monthlyPrice * 12 - plan.annualPrice).toLocaleString()}</span>
                   </div>
@@ -107,32 +135,28 @@ export default function SubscriptionPlans() {
 
                 {plan.notIncluded?.map((f, i) => (
                   <div key={i} className="flex items-start gap-4 opacity-40 grayscale group/item hover:opacity-100 hover:grayscale-0 transition-all">
-                    <div className="w-5 h-5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover/item:rotate-12 transition-transform">
+                    <div className="w-5 h-5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <X size={10} className="text-slate-400" strokeWidth={4} />
                     </div>
-                    <span className="text-xs font-bold text-slate-400 line-through leading-tight group-hover/item:text-slate-800 group-hover/item:no-underline transition-all">{f}</span>
+                    <span className="text-xs font-bold text-slate-400 line-through leading-tight">{f}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Action Button */}
               <button
                 onClick={() => setSelectedPlan(plan)}
                 disabled={plan.name === 'Standard Seller'}
-                className={`w-full py-5 rounded-[1.5rem] bg-primary text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${plan.name === 'Standard Seller'
+                className={`w-full py-5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${plan.name === 'Standard Seller'
                   ? 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed shadow-inner'
                   : isPopular
                     ? 'bg-primary text-white shadow-xl shadow-primary/30 hover:bg-slate-900 border-none'
-                    : 'bg-primary text-white border border-slate-200 hover:border-primary/30  shadow-sm hover:shadow-md'
+                    : 'bg-primary text-white border border-slate-200 hover:border-primary/30 shadow-sm hover:shadow-md'
                   }`}
               >
                 {plan.name === 'Standard Seller' ? (
-                  <>
-                    <ShieldCheck size={14} className="text-primary" /> Active Subscription
-                  </>
+                  <><ShieldCheck size={14} className="text-primary" /> Active Subscription</>
                 ) : (
-                  <>
-                    <Zap size={14} className={isPopular ? 'text-amber-300' : 'text-primary'} />
+                  <><Zap size={14} className={isPopular ? 'text-amber-300' : 'text-white'} />
                     {price > 0 ? 'Secure This Plan' : 'Get Started'}
                   </>
                 )}
@@ -142,8 +166,198 @@ export default function SubscriptionPlans() {
         })}
       </div>
 
-      {/* Subscription History Ledger */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-12" id='history'>
+      {/* ══════════════════════════════════════════════════════════
+          TOP-UP PLANS SECTION
+      ══════════════════════════════════════════════════════════ */}
+      <div>
+        {/* Section heading */}
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
+          <div>
+            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+              <span className="text-primary/80">À la carte</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+              <span>No subscription needed</span>
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
+              Property Upload Top-Up Packs
+              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20">
+                <Sparkles size={10} /> Pay Per Use
+              </span>
+            </h2>
+            <p className="text-sm text-slate-500 mt-1.5 max-w-xl">
+              Need to post extra properties without a full subscription? Buy a one-time top-up pack and go live instantly.
+            </p>
+          </div>
+
+          {/* Billing cycle toggle — same as subscription plans */}
+          <div className="flex-shrink-0 flex items-center gap-1 p-1 bg-slate-100 rounded-2xl border border-slate-200/60 self-start">
+            <button
+              onClick={() => dispatch(setBillingCycle('monthly'))}
+              className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                billingCycle === 'monthly'
+                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
+                  : 'text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => dispatch(setBillingCycle('annual'))}
+              className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 ${
+                billingCycle === 'annual'
+                  ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
+                  : 'text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              Annual
+              <span className="text-[8px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-md">Save 10%</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Top-up cards grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {topUpPlans.map(tp => (
+            <div
+              key={tp.id}
+              className={`relative flex flex-col rounded-[2.5rem] border transition-all duration-300 overflow-hidden bg-white p-8 ${
+                tp.highlight
+                  ? 'border-primary/40 shadow-2xl shadow-primary/5 ring-1 ring-primary/20 pt-16'
+                  : topUpCardBorder[tp.badge]
+              }`}
+            >
+              {/* Best Value ribbon — same style as Most Popular */}
+              {tp.highlight && (
+                <div className="absolute top-0 left-0">
+                  <div className="bg-primary text-white text-[9px] font-black uppercase tracking-[0.2em] px-8 py-2.5 rounded-br-2xl shadow-xl">
+                    Best Value
+                  </div>
+                </div>
+              )}
+
+              {/* Header */}
+              <div className="mb-8">
+                <span className={`inline-flex text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border mb-4 ${topUpBadgeStyles[tp.badge]}`}>
+                  {tp.badge}
+                </span>
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight">{tp.name}</h3>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{tp.tagline}</p>
+
+                {/* Price — responds to billingCycle */}
+                {(() => {
+                  const topUpPrice = billingCycle === 'annual' ? tp.annualPrice : tp.monthlyPrice;
+                  return (
+                    <>
+                      <div className="flex items-baseline gap-2 mt-5">
+                        <span className="text-2xl font-black text-primary/40 tracking-tighter">₹</span>
+                        <span className="text-5xl font-black text-slate-900 tracking-tighter tabular-nums leading-none">
+                          {topUpPrice.toLocaleString()}
+                        </span>
+                        <div className="flex flex-col ml-1">
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">/ {billingCycle}</span>
+                          <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest mt-1">No Renewal</span>
+                        </div>
+                      </div>
+                      {billingCycle === 'annual' && (
+                        <div className="inline-flex items-center gap-2 mt-4 px-4 py-1.5 bg-emerald-50/50 text-emerald-600 rounded-xl border border-emerald-100/50 shadow-sm">
+                          <Check size={10} strokeWidth={4} />
+                          <span className="text-[9px] font-black uppercase tracking-widest">Save ₹{(tp.monthlyPrice * 12 - tp.annualPrice).toLocaleString()} vs monthly</span>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+
+                {/* Stats pills */}
+                <div className="flex items-center gap-2 mt-5">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 text-primary rounded-xl border border-primary/15">
+                    <Building2 size={10} />
+                    <span className="text-[9px] font-black uppercase tracking-widest">
+                      {tp.properties} {tp.properties === 1 ? 'Property' : 'Properties'}
+                    </span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 rounded-xl border border-slate-100">
+                    <Clock size={10} className="text-slate-400" />
+                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{tp.validity}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature list — same Check/X as seller plan cards */}
+              <div className="flex-1 space-y-4 mb-5">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
+                  What's Included
+                  <div className="h-px flex-1 bg-slate-100" />
+                </p>
+
+                {tp.features.map((f, i) => (
+                  <div key={i} className="flex items-start gap-4 group/item">
+                    <div className="w-5 h-5 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover/item:scale-110 transition-transform shadow-sm">
+                      <Check size={10} className="text-emerald-600" strokeWidth={4} />
+                    </div>
+                    <span className="text-xs font-bold text-slate-600 leading-tight group-hover/item:text-slate-900 transition-colors">{f}</span>
+                  </div>
+                ))}
+
+                {tp.notIncluded?.map((f, i) => (
+                  <div key={i} className="flex items-start gap-4 opacity-40 grayscale group/item hover:opacity-100 hover:grayscale-0 transition-all">
+                    <div className="w-5 h-5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <X size={10} className="text-slate-400" strokeWidth={4} />
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 line-through leading-tight">{f}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA — same style as seller plan button */}
+              <button
+                onClick={() => setSelectedTopUp(tp)}
+                className={`w-full py-5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${
+                  tp.highlight
+                    ? 'bg-primary text-white shadow-xl shadow-primary/30 hover:bg-slate-900'
+                    : 'bg-primary text-white border border-slate-200 hover:border-primary/30 shadow-sm hover:shadow-md'
+                }`}
+              >
+                <Plus size={14} /> Buy Top-Up Pack
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Info strip */}
+        <div className="mt-6 flex flex-wrap items-center gap-6 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+              <ShieldCheck size={14} className="text-emerald-500" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-slate-800">Instant Activation</p>
+              <p className="text-[9px] text-slate-400">Goes live within minutes of payment</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+              <Zap size={14} className="text-amber-500" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-slate-800">No Subscription Required</p>
+              <p className="text-[9px] text-slate-400">One-time purchase, no auto-renewal</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+              <Building2 size={14} className="text-primary" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-slate-800">Stackable Packs</p>
+              <p className="text-[9px] text-slate-400">Buy multiple packs to extend your reach</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Subscription History Ledger ── */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden" id="history">
         <div className="px-8 py-6 bg-white border-b border-slate-100 flex items-center justify-between">
           <div>
             <h3 className="text-sm font-black text-slate-900 tracking-tight">Subscription Ledger</h3>
@@ -152,18 +366,14 @@ export default function SubscriptionPlans() {
               <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">Complete Transaction History</p>
             </div>
           </div>
-          {/* <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-bold uppercase tracking-widest border border-emerald-100 shadow-sm">
-            Real-time Audit
-          </div> */}
         </div>
         <div className="overflow-x-auto">
           <table className="data-table">
             <thead>
               <tr className="bg-slate-50/20 border-b border-slate-100">
                 <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Transaction ID</th>
-                {/* <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Customer</th> */}
                 <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Plan Type</th>
-                <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">AmountPaid</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Amount Paid</th>
                 <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Status</th>
                 <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-center">Date</th>
               </tr>
@@ -172,12 +382,6 @@ export default function SubscriptionPlans() {
               {paginatedTransactions.map(txn => (
                 <tr key={txn.id} className="group hover:bg-slate-50/50 transition-colors">
                   <td className="px-8 py-5 text-[10px] font-bold text-slate-400 font-mono tracking-tighter">{txn.id}</td>
-                  {/* <td className="px-8 py-5">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-slate-800">{txn.user}</span>
-                      <span className="text-[9px] text-slate-400">{txn.email}</span>
-                    </div>
-                  </td> */}
                   <td className="px-8 py-5">
                     <span className="text-xs font-medium text-slate-600">{txn.type}</span>
                   </td>
@@ -197,7 +401,7 @@ export default function SubscriptionPlans() {
           </table>
         </div>
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         <div className="px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             Showing <span className="text-slate-700">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-slate-700">{Math.min(currentPage * itemsPerPage, allTransactions.length)}</span> of <span className="text-slate-700">{allTransactions.length}</span> entries
@@ -210,7 +414,6 @@ export default function SubscriptionPlans() {
             >
               <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
             </button>
-
             {[...Array(totalPages)].map((_, i) => (
               <button
                 key={i + 1}
@@ -223,7 +426,6 @@ export default function SubscriptionPlans() {
                 {i + 1}
               </button>
             ))}
-
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
@@ -235,7 +437,7 @@ export default function SubscriptionPlans() {
         </div>
       </div>
 
-      {/* Checkout Confirmation Modal */}
+      {/* ── Subscription Plan Checkout Modal ── */}
       <Modal
         isOpen={!!selectedPlan}
         onClose={() => !isProcessing && setSelectedPlan(null)}
@@ -274,11 +476,9 @@ export default function SubscriptionPlans() {
               </div>
             </div>
 
-            {/* Plan Benefits Summary */}
             <div className="px-2">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                Package Benefits
-                <div className="h-px flex-1 bg-slate-100" />
+                Package Benefits <div className="h-px flex-1 bg-slate-100" />
               </p>
               <div className="grid grid-cols-2 gap-x-8 gap-y-3">
                 {selectedPlan.features.map((f, i) => (
@@ -305,25 +505,108 @@ export default function SubscriptionPlans() {
                 <ShieldCheck size={20} className="text-primary" />
               </div>
               <p className="text-[11px] font-medium text-slate-600 leading-relaxed">
-                By completing this purchase, you authorize Sherla Properties to activate the <strong>{selectedPlan.name}</strong> on your vendor dashboard. All transactions are secured via enterprise-grade 256-bit encryption.
+                By completing this purchase, you authorize Sherla Properties to activate the <strong>{selectedPlan.name}</strong> on your vendor dashboard. All transactions are secured via 256-bit encryption.
               </p>
             </div>
 
             <button
-              onClick={() => {
-                setIsProcessing(true);
-                setTimeout(() => {
-                  setIsProcessing(false);
-                  setSelectedPlan(null);
-                  alert('Subscription Activated Successfully!');
-                }, 2000);
-              }}
+              onClick={() => handleProcessPayment(selectedPlan.name, () => setSelectedPlan(null))}
               disabled={isProcessing}
-              className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-slate-200 hover:bg-primary transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait"
+              className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-primary transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait"
             >
               {isProcessing ? 'Verifying Transaction...' : 'Confirm & Activate Plan'}
             </button>
+            <p className="text-[9px] text-center font-bold text-slate-400 uppercase tracking-widest">
+              Secured by SherlaPay Gateway
+            </p>
+          </div>
+        )}
+      </Modal>
 
+      {/* ── Top-Up Checkout Modal ── */}
+      <Modal
+        isOpen={!!selectedTopUp}
+        onClose={() => !isProcessing && setSelectedTopUp(null)}
+        title="Buy Top-Up Pack"
+        size="lg"
+      >
+        {selectedTopUp && (
+          <div className="space-y-6">
+            {/* Summary */}
+            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+              <div className="flex items-start justify-between mb-5">
+                <div>
+                  <span className={`inline-flex text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border mb-3 ${topUpBadgeStyles[selectedTopUp.badge]}`}>
+                    {selectedTopUp.badge}
+                  </span>
+                  <h4 className="text-xl font-bold text-slate-900">{selectedTopUp.name}</h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">{selectedTopUp.tagline}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-black text-slate-900 tabular-nums">₹{selectedTopUp.price.toLocaleString()}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">one-time</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-200/50">
+                <div className="flex items-center gap-2 p-3 bg-white rounded-xl border border-slate-100">
+                  <Building2 size={13} className="text-primary" />
+                  <div>
+                    <p className="text-[9px] text-slate-400 font-bold uppercase">Properties</p>
+                    <p className="text-xs font-black text-slate-900">{selectedTopUp.properties} {selectedTopUp.properties === 1 ? 'Listing' : 'Listings'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-white rounded-xl border border-slate-100">
+                  <Clock size={13} className="text-slate-500" />
+                  <div>
+                    <p className="text-[9px] text-slate-400 font-bold uppercase">Validity</p>
+                    <p className="text-xs font-black text-slate-900">{selectedTopUp.validity}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature list — same Check/X as plan cards */}
+            <div className="px-2">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                Package Benefits <div className="h-px flex-1 bg-slate-100" />
+              </p>
+              <div className="space-y-3">
+                {selectedTopUp.features.map((f, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check size={10} className="text-emerald-600" strokeWidth={3} />
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-600 leading-tight">{f}</span>
+                  </div>
+                ))}
+                {selectedTopUp.notIncluded?.map((f, i) => (
+                  <div key={i} className="flex items-start gap-3 opacity-40">
+                    <div className="w-5 h-5 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <X size={10} className="text-slate-300" strokeWidth={3} />
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-400 line-through leading-tight">{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm flex-shrink-0">
+                <ShieldCheck size={20} className="text-primary" />
+              </div>
+              <p className="text-[11px] font-medium text-slate-600 leading-relaxed">
+                This is a <strong>one-time purchase</strong> — no auto-renewal. Your top-up listings will activate instantly after payment confirmation.
+              </p>
+            </div>
+
+            <button
+              onClick={() => handleProcessPayment(selectedTopUp.name, () => setSelectedTopUp(null))}
+              disabled={isProcessing}
+              className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-primary transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait"
+            >
+              {isProcessing ? 'Processing Payment...' : `Pay ₹${selectedTopUp.price.toLocaleString()} & Activate`}
+            </button>
             <p className="text-[9px] text-center font-bold text-slate-400 uppercase tracking-widest">
               Secured by SherlaPay Gateway
             </p>

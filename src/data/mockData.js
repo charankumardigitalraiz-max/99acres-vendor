@@ -176,6 +176,64 @@ export const sellerPlans = [
   },
 ];
 
+// ─── Top-Up Plans ─────────────────────────────────────────────────────────────
+// All tiers share the same feature set — only properties count, validity & price differ.
+const topUpBaseFeatures = [
+  'Property Listing Upload',
+  'Photo & Video Upload',
+  'Standard Search Visibility',
+  'Direct Buyer Contact (Calls & Messages)',
+  'Basic Listing Analytics',
+  'Verified Seller Badge on Listing',
+];
+const topUpBaseNotIncluded = [
+  'Featured / Priority Placement',
+  'Urgent Tag on Listing',
+  'Dedicated Support',
+];
+
+export const topUpPlans = [
+  {
+    id: 'tp1',
+    name: 'Single Upload',
+    tagline: 'Pay once, post one property instantly',
+    monthlyPrice: 199,
+    annualPrice: 1799,
+    properties: 1,
+    validity: '30 Days',
+    badge: 'Starter',
+    highlight: false,
+    features: topUpBaseFeatures,
+    notIncluded: topUpBaseNotIncluded,
+  },
+  {
+    id: 'tp2',
+    name: 'Power Pack',
+    tagline: 'Best value for active sellers',
+    monthlyPrice: 799,
+    annualPrice: 7199,
+    properties: 5,
+    validity: '60 Days',
+    badge: 'Popular',
+    highlight: true,
+    features: topUpBaseFeatures,
+    notIncluded: topUpBaseNotIncluded,
+  },
+  {
+    id: 'tp3',
+    name: 'Elite Bundle',
+    tagline: 'Maximum listings, maximum reach',
+    monthlyPrice: 1999,
+    annualPrice: 17999,
+    properties: 15,
+    validity: '90 Days',
+    badge: 'Premium',
+    highlight: false,
+    features: topUpBaseFeatures,
+    notIncluded: topUpBaseNotIncluded,
+  },
+];
+
 // ─── Users ────────────────────────────────────────────────────────────────────
 export const usersData = [
   { id: '10001', name: 'Rahul Sharma', email: 'rahul.sharma@email.com', phone: '+91 98765 43210', altPhone: '+91 91234 56780', landline: '022-26543210', role: 'Buyer', status: 'Active', joined: '2024-08-12', avatar: 'RS', city: 'Mumbai', properties: 0, subscription: 'Free', address: { city: 'Mumbai', location: 'Andheri East', fullAddress: 'Flat 402, Sunshine Apts, Andheri East, Mumbai, Maharashtra 400069' }, activity: [{ action: 'Logged into dashboard', time: '2 hours ago' }, { action: 'Viewed a property listing', time: '1 day ago' }, { action: 'Updated profile information', time: '1 week ago' }], reports: [{ id: 'REP-101', reporter: 'System', reason: 'Security check flag', date: '25 Mar, 2025', status: 'Resolved' }, { id: 'REP-102', reporter: 'Admin', reason: 'Identity verification pending', date: '28 Mar, 2025', status: 'Active' }], chats: [{ name: 'Amit Verma', role: 'Agent', msg: "Sent property documents for approval...", time: '12 mins ago', unread: true }, { name: 'Rahul Sharma', role: 'Buyer', msg: "Is the price negotiable for the Powai villa?", time: '2 hours ago', unread: false }], transactions: [{ id: 'TXN-9021', type: 'Subscription Move', amount: '₹49,999', date: '22 Mar, 2025', status: 'Completed', color: 'emerald' }, { id: 'TXN-8842', type: 'Featured Listing', amount: '₹2,499', date: '18 Mar, 2025', status: 'Completed', color: 'emerald' }], wishlist: [1, 2, 3] },
