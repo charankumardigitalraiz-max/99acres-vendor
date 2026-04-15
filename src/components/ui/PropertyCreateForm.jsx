@@ -62,6 +62,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
         hmdaApprovalDoc: null,
         reraCertificate: null,
         reraExpiry: '',
+        additionalApprovals: [], // Array of { title: '', number: '', doc: null }
 
         // Specialized Specs (Conditionally used based on propertyType)
         numberOfFloors: '',
@@ -145,6 +146,38 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
         }));
     };
 
+    const handleAddAdditionalApproval = () => {
+        setFormData(prev => ({
+            ...prev,
+            additionalApprovals: [
+                ...prev.additionalApprovals,
+                { title: '', number: '', doc: null }
+            ]
+        }));
+    };
+
+    const handleUpdateAdditionalApproval = (index, field, value) => {
+        setFormData(prev => {
+            const updated = [...prev.additionalApprovals];
+            updated[index] = { ...updated[index], [field]: value };
+            return { ...prev, additionalApprovals: updated };
+        });
+    };
+
+    const handleDeleteAdditionalApproval = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            additionalApprovals: prev.additionalApprovals.filter((_, i) => i !== index)
+        }));
+    };
+
+    const handleAdditionalApprovalFileChange = (e, index) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        handleUpdateAdditionalApproval(index, 'doc', url);
+    };
+
     const handleFileChange = (e, field, category, isArray = false) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
@@ -184,6 +217,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
     const posterRef = useRef(null);
     const photosRef = useRef(null);
     const videoRef = useRef(null);
+    const additionalApprovalRef = useRef(null);
     const aboutCompanyRef = useRef(null);
 
     const handleSaveDraft = () => {
@@ -790,20 +824,68 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     </div>
                                 </div>
 
-                                {/* <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Letters</p>
-                                    <div
-                                        onClick={() => approvalLettersRef.current?.click()}
-                                        className="h-11 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 flex items-center justify-center cursor-pointer hover:bg-white hover:border-primary/50 transition-all relative overflow-hidden"
+                                <div className="flex items-center justify-center h-full min-h-[120px]">
+                                    <button
+                                        onClick={handleAddAdditionalApproval}
+                                        className="w-full h-full border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-3  border-primary/30 bg-slate-50 text-primary transition-all group"
                                     >
-                                        <input type="file" ref={approvalLettersRef} className="hidden" multiple onChange={(e) => handleFileChange(e, 'approvalLetters', null, true)} />
-                                        {formData.approvalLetters.length > 0 ? (
-                                            <span className="text-[10px] font-bold text-emerald-600">{formData.approvalLetters.length} Files Added</span>
-                                        ) : (
-                                            <UploadCloud size={18} className="text-slate-300" />
-                                        )}
+                                        <div className="p-3  rounded-xl bg-primary text-white">
+                                            <Plus size={20} />
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Add More Approval</span>
+                                    </button>
+                                </div>
+
+                                {formData.additionalApprovals.map((approval, index) => (
+                                    <div key={index} className="space-y-4 p-4 border-2 border-dashed border-slate-100 rounded-2xl relative group">
+                                        <button
+                                            onClick={() => handleDeleteAdditionalApproval(index)}
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg shadow-rose-200"
+                                        >
+                                            <Trash2 size={12} />
+                                        </button>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Title</p>
+                                            <input
+                                                type="text"
+                                                value={approval.title}
+                                                onChange={(e) => handleUpdateAdditionalApproval(index, 'title', e.target.value)}
+                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                placeholder="e.g. Fire Safety, Environmental"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Number</p>
+                                                <input
+                                                    type="text"
+                                                    value={approval.number}
+                                                    onChange={(e) => handleUpdateAdditionalApproval(index, 'number', e.target.value)}
+                                                    className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                    placeholder="No."
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Document</p>
+                                                <div
+                                                    onClick={() => {
+                                                        const input = document.getElementById(`additional-doc-${index}`);
+                                                        input?.click();
+                                                    }}
+                                                    className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${approval.doc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                >
+                                                    <input
+                                                        type="file"
+                                                        id={`additional-doc-${index}`}
+                                                        className="hidden"
+                                                        onChange={(e) => handleAdditionalApprovalFileChange(e, index)}
+                                                    />
+                                                    {approval.doc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div> */}
+                                ))}
                             </div>
                         </section>
 
@@ -1233,7 +1315,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     <div>
                                         <div className="flex items-center justify-between mb-2">
                                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Product Video</p>
-                                            <span className="text-[12px] font-bold text-slate-400 uppercase">Max 20MB | MP4, MOV</span>
+                                            <span className="text-[12px] font-bold text-slate-400 uppercase">Max 20MB | MP4</span>
                                         </div>
                                         <div
                                             onClick={() => videoRef.current?.click()}
