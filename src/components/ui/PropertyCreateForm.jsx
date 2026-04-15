@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
     User, Building, MapPin, IndianRupee, Image as ImageIcon,
     ShieldCheck, Check, Layout, Calendar, Play, Plus, UploadCloud, Trash2, Smartphone, CheckCircle, ArrowRight, Lock,
-    FileText, Briefcase, Phone, Mail, Award, Info, FileStack, Camera, Video, ChevronLeft,
+    FileText, Briefcase, Phone, Mail, Award, Info, FileStack, Camera, Video, ChevronLeft, ChevronDown,
     Waves, Dumbbell, Zap, Car, ArrowUpCircle, Users, Trees, Activity, Droplets, CloudRain
 } from 'lucide-react';
 import Modal from './Modal';
@@ -23,6 +23,13 @@ import {
 
 export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) {
     const [openStep, setOpenStep] = useState(1);
+    const [isSalesExpanded, setIsSalesExpanded] = useState(false);
+    const [isLoanExpanded, setIsLoanExpanded] = useState(false);
+    const [isLegalExpanded, setIsLegalExpanded] = useState(false);
+    const [isPropertyInfoExpanded, setIsPropertyInfoExpanded] = useState(false);
+    const [isPermissionsExpanded, setIsPermissionsExpanded] = useState(false);
+    const [isReraExpanded, setIsReraExpanded] = useState(false);
+    const [isSpecsExpanded, setIsSpecsExpanded] = useState(false);
     const [formData, setFormData] = useState(initialData || {
         // Step 1: Professional Profile
         personalDetails: {
@@ -61,6 +68,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
         hmdaApprovalNumber: '',
         hmdaApprovalDoc: null,
         reraCertificate: null,
+        reraNumber: '',
         reraExpiry: '',
         additionalApprovals: [], // Array of { title: '', number: '', doc: null }
 
@@ -431,136 +439,162 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                         </section>
 
                         {/* Legal Advisor */}
-                        <section className="pt-10 border-t border-slate-100">
-                            <div className="flex items-center gap-2 mb-6">
-                                <Award className="text-primary" size={18} />
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Legal Advisor</h3>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isLegalExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
+                            <button
+                                onClick={() => setIsLegalExpanded(!isLegalExpanded)}
+                                className="flex items-center justify-between w-full group transition-all"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Award className="text-primary" size={18} />
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Legal Advisor</h3>
+                                    {/* {!isLegalExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>} */}
+                                </div>
+                                <div className={`p-1.5 rounded-lg border transition-all ${isLegalExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
+                                    <ChevronDown size={14} />
+                                </div>
+                            </button>
 
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
-                                        Full Name</p>
-                                    <input
-                                        type="text"
-                                        value={formData.legalAdvisor.lastName}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'lastName', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Legal Advisor's Full Name"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Enroll Number</p>
-                                    <input
-                                        type="text"
-                                        value={formData.legalAdvisor.rollNumber}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'rollNumber', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Bar Roll Number"
-                                    />
-                                </div>
+                            {isLegalExpanded && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Full Name</p>
+                                        <input
+                                            type="text"
+                                            value={formData.legalAdvisor.lastName}
+                                            onChange={(e) => handleNestedChange('legalAdvisor', 'lastName', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none transition-all"
+                                            placeholder="Legal Advisor's Full Name"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Enroll Number</p>
+                                        <input
+                                            type="text"
+                                            value={formData.legalAdvisor.rollNumber}
+                                            onChange={(e) => handleNestedChange('legalAdvisor', 'rollNumber', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none transition-all"
+                                            placeholder="Bar Roll Number"
+                                        />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Member of (Bar Council)</p>
-                                    <select
-                                        value={formData.legalAdvisor.memberOf}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'memberOf', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                    >
-                                        {BAR_COUNCILS.map(council => (
-                                            <option key={council} value={council}>{council}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Contact Number</p>
-                                    <input
-                                        type="tel"
-                                        value={formData.legalAdvisor.contactNumber}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'contactNumber', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Legal Advisor's Phone"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload ID Card</p>
-                                    <div
-                                        onClick={() => idCardRef.current?.click()}
-                                        className="h-20 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-white hover:border-primary/50 transition-all overflow-hidden relative"
-                                    >
-                                        <input type="file" ref={idCardRef} className="hidden" onChange={(e) => handleFileChange(e, 'idCard', 'personalDetails')} />
-                                        {formData.personalDetails.idCard ? (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold text-[10px] uppercase tracking-widest">
-                                                <Check size={14} className="mr-1" /> ID Uploaded
-                                            </div>
-                                        ) : (
-                                            <>
-                                                <Camera size={18} className="text-slate-300 mb-1" />
-                                                <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Click to upload</span>
-                                            </>
-                                        )}
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Member of (Bar Council)</p>
+                                        <select
+                                            value={formData.legalAdvisor.memberOf}
+                                            onChange={(e) => handleNestedChange('legalAdvisor', 'memberOf', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none transition-all"
+                                        >
+                                            {BAR_COUNCILS.map(council => (
+                                                <option key={council} value={council}>{council}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Contact Number</p>
+                                        <input
+                                            type="tel"
+                                            value={formData.legalAdvisor.contactNumber}
+                                            onChange={(e) => handleNestedChange('legalAdvisor', 'contactNumber', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none transition-all"
+                                            placeholder="Legal Advisor's Phone"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload ID Card</p>
+                                        <div
+                                            onClick={() => idCardRef.current?.click()}
+                                            className="h-11 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 flex flex-row items-center justify-center cursor-pointer hover:bg-white hover:border-primary/50 transition-all overflow-hidden relative"
+                                        >
+                                            <input type="file" ref={idCardRef} className="hidden" onChange={(e) => handleFileChange(e, 'idCard', 'personalDetails')} />
+                                            {formData.personalDetails.idCard ? (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold text-[10px] uppercase tracking-widest">
+                                                    <CheckCircle size={14} className="mr-1" /> ID Uploaded
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <Camera size={18} className="text-slate-300 mb-1" />
+                                                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Click to upload</span>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </section>
 
                         {/* Departments */}
-                        <div className="grid grid-cols-1 lg:grid-cols-1 gap-10 pt-10 border-t border-slate-100">
+                        <div className="grid grid-cols-1 lg:grid-cols-1 gap-2">
                             {/* Sales Dept */}
-                            <section>
-                                <div className="flex items-center gap-2 mb-6">
-                                    <Briefcase className="text-blue-500" size={18} />
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Sales Department</h3>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    {/* <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">First Name</p>
-                                        <input type="text" value={formData.salesDept.firstName} onChange={(e) => handleNestedChange('salesDept', 'firstName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="First Name" />
-                                    </div> */}
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Full Name</p>
-                                        <input type="text" value={formData.salesDept.lastName} onChange={(e) => handleNestedChange('salesDept', 'lastName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Last Name" />
+                            <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isSalesExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
+                                <button
+                                    onClick={() => setIsSalesExpanded(!isSalesExpanded)}
+                                    className="flex items-center justify-between w-full group transition-all"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <Briefcase className="text-blue-500" size={18} />
+                                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Sales Department</h3>
+                                        {!isSalesExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>}
                                     </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Phone</p>
-                                        <input type="tel" value={formData.salesDept.phoneNumber} onChange={(e) => handleNestedChange('salesDept', 'phoneNumber', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Phone" />
+                                    <div className={`p-1.5 rounded-lg border transition-all ${isSalesExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
+                                        <ChevronDown size={14} />
                                     </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Email</p>
-                                        <input type="email" value={formData.salesDept.email} onChange={(e) => handleNestedChange('salesDept', 'email', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Email" />
+                                </button>
+
+                                {isSalesExpanded && (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Full Name</p>
+                                            <input type="text" value={formData.salesDept.lastName} onChange={(e) => handleNestedChange('salesDept', 'lastName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Last Name" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Phone</p>
+                                            <input type="tel" value={formData.salesDept.phoneNumber} onChange={(e) => handleNestedChange('salesDept', 'phoneNumber', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Phone" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Email</p>
+                                            <input type="email" value={formData.salesDept.email} onChange={(e) => handleNestedChange('salesDept', 'email', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Email" />
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </section>
 
                             {/* Loan Dept */}
-                            <section>
-                                <div className="flex items-center gap-2 mb-6">
-                                    <IndianRupee className="text-emerald-500" size={18} />
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Loan Department</h3>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    {/* <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">First Name</p>
-                                        <input type="text" value={formData.loanDept.firstName} onChange={(e) => handleNestedChange('loanDept', 'firstName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="First Name" />
-                                    </div> */}
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Full Name</p>
-                                        <input type="text" value={formData.loanDept.lastName} onChange={(e) => handleNestedChange('loanDept', 'lastName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Enter the Full name" />
+                            <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isLoanExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
+                                <button
+                                    onClick={() => setIsLoanExpanded(!isLoanExpanded)}
+                                    className="flex items-center justify-between w-full group transition-all"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <IndianRupee className="text-emerald-500" size={18} />
+                                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Loan Department</h3>
+                                        {!isLoanExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>}
                                     </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Phone</p>
-                                        <input type="tel" value={formData.loanDept.phoneNumber} onChange={(e) => handleNestedChange('loanDept', 'phoneNumber', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Phone" />
+                                    <div className={`p-1.5 rounded-lg border transition-all ${isLoanExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
+                                        <ChevronDown size={14} />
                                     </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Email</p>
-                                        <input type="email" value={formData.loanDept.email} onChange={(e) => handleNestedChange('loanDept', 'email', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Email" />
+                                </button>
+
+                                {isLoanExpanded && (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Full Name</p>
+                                            <input type="text" value={formData.loanDept.lastName} onChange={(e) => handleNestedChange('loanDept', 'lastName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Enter the Full name" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Phone</p>
+                                            <input type="tel" value={formData.loanDept.phoneNumber} onChange={(e) => handleNestedChange('loanDept', 'phoneNumber', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Phone" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Email</p>
+                                            <input type="email" value={formData.loanDept.email} onChange={(e) => handleNestedChange('loanDept', 'email', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Email" />
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </section>
                         </div>
 
                         {/* Previous Projects */}
-                        <section className="pt-10 border-t border-slate-100">
+                        <section >
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-2">
                                     <FileStack className="text-orange-500" size={18} />
@@ -636,7 +670,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                         </section>
 
                         {/* About Company */}
-                        <section className="pt-10 border-t border-slate-100">
+                        <section >
                             <div className="flex items-center gap-2 mb-6">
                                 <Info className="text-primary" size={18} />
                                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">About Company</h3>
@@ -683,286 +717,447 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                 {/* STEP 2: PROJECT & PROPERTY INFO */}
                 {openStep === 2 && (
                     <div className="p-8 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
-                        <section>
-                            <div className="flex items-center gap-2 mb-6">
-                                <Building className="text-primary" size={18} />
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Property Information</h3>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Posting Property as</p>
-                                    <div className="flex gap-2">
-                                        {['Owner', 'Builder', 'Agent'].map(option => (
-                                            <button
-                                                key={option}
-                                                onClick={() => handleChange('postingAs', option)}
-                                                className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold border transition-all ${formData.postingAs === option ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-2 border-slate-200 text-slate-800 hover:border-slate-300'}`}
-                                            >
-                                                {option}
-                                            </button>
-                                        ))}
+                        {/* Property Information */}
+                        <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isPropertyInfoExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
+                            <button
+                                onClick={() => setIsPropertyInfoExpanded(!isPropertyInfoExpanded)}
+                                className="flex items-center justify-between w-full group transition-all"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Building className="text-primary" size={18} />
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Property Information</h3>
+                                    {!isPropertyInfoExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
+                                </div>
+                                <div className={`p-1.5 rounded-lg border transition-all ${isPropertyInfoExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
+                                    <ChevronDown size={14} />
+                                </div>
+                            </button>
+
+                            {isPropertyInfoExpanded && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Posting Property as</p>
+                                        <div className="flex gap-2">
+                                            {['Owner', 'Builder', 'Agent'].map(option => (
+                                                <button
+                                                    key={option}
+                                                    onClick={() => handleChange('postingAs', option)}
+                                                    className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold border transition-all ${formData.postingAs === option ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-2 border-slate-200 text-slate-800 hover:border-slate-300'}`}
+                                                >
+                                                    {option}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Name of the Project / Society</p>
+                                        <input
+                                            type="text"
+                                            value={formData.projectName}
+                                            onChange={(e) => handleChange('projectName', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                            placeholder="Enter project/society name"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Property Type</p>
+                                        <select
+                                            value={formData.propertyType}
+                                            onChange={(e) => handleChange('propertyType', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                        >
+                                            {PROPERTY_TYPES.map(type => (
+                                                <option key={type} value={type}>{type}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Project Approved by</p>
+                                        <select
+                                            value={formData.projectApprovedBy}
+                                            onChange={(e) => handleChange('projectApprovedBy', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                        >
+                                            {APPROVAL_AUTHORITIES.map(auth => (
+                                                <option key={auth} value={auth}>{auth}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Property Type</p>
-                                    <select
-                                        value={formData.propertyType}
-                                        onChange={(e) => handleChange('propertyType', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                    >
-                                        {PROPERTY_TYPES.map(type => (
-                                            <option key={type} value={type}>{type}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Name of the Project / Society</p>
-                                    <input
-                                        type="text"
-                                        value={formData.projectName}
-                                        onChange={(e) => handleChange('projectName', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Enter project/society name"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Project Approved by</p>
-                                    <select
-                                        value={formData.projectApprovedBy}
-                                        onChange={(e) => handleChange('projectApprovedBy', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                    >
-                                        {APPROVAL_AUTHORITIES.map(auth => (
-                                            <option key={auth} value={auth}>{auth}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
+                            )}
                         </section>
 
                         {/* Old Step 3 content merged into Step 2 */}
 
                         {/* Permissions & Numbers */}
-                        <section className="pt-10 border-t border-slate-100">
-                            <div className="flex items-center gap-2 mb-6">
-                                <FileText className="text-primary" size={18} />
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Permissions & Approval Numbers</h3>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-1 gap-4">
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Layout Permission No.</p>
-                                            <input
-                                                type="text"
-                                                value={formData.layoutPermissionNumber}
-                                                onChange={(e) => handleChange('layoutPermissionNumber', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                placeholder="No."
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Layout Document</p>
-                                            <div
-                                                onClick={() => layoutPermissionRef.current?.click()}
-                                                className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.layoutPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
-                                            >
-                                                <input type="file" ref={layoutPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'layoutPermissionDoc')} />
-                                                {formData.layoutPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
-                                            </div>
-                                        </div>
-                                    </div>
+                        <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isPermissionsExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
+                            <button
+                                onClick={() => setIsPermissionsExpanded(!isPermissionsExpanded)}
+                                className="flex items-center justify-between w-full group transition-all"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <FileText className="text-primary" size={18} />
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Permissions & Approval Numbers</h3>
+                                    {!isPermissionsExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
                                 </div>
-
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-1 gap-4">
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Building Permission No.</p>
-                                            <input
-                                                type="text"
-                                                value={formData.buildingPermissionNumber}
-                                                onChange={(e) => handleChange('buildingPermissionNumber', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                placeholder="No."
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Building Document</p>
-                                            <div
-                                                onClick={() => buildingPermissionRef.current?.click()}
-                                                className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.buildingPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
-                                            >
-                                                <input type="file" ref={buildingPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'buildingPermissionDoc')} />
-                                                {formData.buildingPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div className={`p-1.5 rounded-lg border transition-all ${isPermissionsExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
+                                    <ChevronDown size={14} />
                                 </div>
+                            </button>
 
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-1 gap-4">
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">HMDA Approval No.</p>
-                                            <input
-                                                type="text"
-                                                value={formData.hmdaApprovalNumber}
-                                                onChange={(e) => handleChange('hmdaApprovalNumber', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                placeholder="No."
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload HMDA Document</p>
-                                            <div
-                                                onClick={() => hmdaApprovalRef.current?.click()}
-                                                className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.hmdaApprovalDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
-                                            >
-                                                <input type="file" ref={hmdaApprovalRef} className="hidden" onChange={(e) => handleFileChange(e, 'hmdaApprovalDoc')} />
-                                                {formData.hmdaApprovalDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center justify-center h-full min-h-[120px]">
-                                    <button
-                                        onClick={handleAddAdditionalApproval}
-                                        className="w-full h-full border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-3  border-primary/30 bg-slate-50 text-primary transition-all group"
-                                    >
-                                        <div className="p-3  rounded-xl bg-primary text-white">
-                                            <Plus size={20} />
-                                        </div>
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Add More Approval</span>
-                                    </button>
-                                </div>
-
-                                {formData.additionalApprovals.map((approval, index) => (
-                                    <div key={index} className="space-y-4 p-4 border-2 border-dashed border-slate-100 rounded-2xl relative group">
-                                        <button
-                                            onClick={() => handleDeleteAdditionalApproval(index)}
-                                            className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg shadow-rose-200"
-                                        >
-                                            <Trash2 size={12} />
-                                        </button>
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Title</p>
-                                            <input
-                                                type="text"
-                                                value={approval.title}
-                                                onChange={(e) => handleUpdateAdditionalApproval(index, 'title', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                placeholder="e.g. Fire Safety, Environmental"
-                                            />
-                                        </div>
+                            {isPermissionsExpanded && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
+                                    <div className="space-y-4">
                                         <div className="grid grid-cols-1 gap-4">
                                             <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Number</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Layout Permission No.</p>
                                                 <input
                                                     type="text"
-                                                    value={approval.number}
-                                                    onChange={(e) => handleUpdateAdditionalApproval(index, 'number', e.target.value)}
+                                                    value={formData.layoutPermissionNumber}
+                                                    onChange={(e) => handleChange('layoutPermissionNumber', e.target.value)}
                                                     className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
                                                     placeholder="No."
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Document</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Layout Document</p>
                                                 <div
-                                                    onClick={() => {
-                                                        const input = document.getElementById(`additional-doc-${index}`);
-                                                        input?.click();
-                                                    }}
-                                                    className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${approval.doc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                    onClick={() => layoutPermissionRef.current?.click()}
+                                                    className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.layoutPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
                                                 >
-                                                    <input
-                                                        type="file"
-                                                        id={`additional-doc-${index}`}
-                                                        className="hidden"
-                                                        onChange={(e) => handleAdditionalApprovalFileChange(e, index)}
-                                                    />
-                                                    {approval.doc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                    <input type="file" ref={layoutPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'layoutPermissionDoc')} />
+                                                    {formData.layoutPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Building Permission No.</p>
+                                                <input
+                                                    type="text"
+                                                    value={formData.buildingPermissionNumber}
+                                                    onChange={(e) => handleChange('buildingPermissionNumber', e.target.value)}
+                                                    className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                    placeholder="No."
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Building Document</p>
+                                                <div
+                                                    onClick={() => buildingPermissionRef.current?.click()}
+                                                    className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.buildingPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                >
+                                                    <input type="file" ref={buildingPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'buildingPermissionDoc')} />
+                                                    {formData.buildingPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">HMDA Approval No.</p>
+                                                <input
+                                                    type="text"
+                                                    value={formData.hmdaApprovalNumber}
+                                                    onChange={(e) => handleChange('hmdaApprovalNumber', e.target.value)}
+                                                    className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                    placeholder="No."
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload HMDA Document</p>
+                                                <div
+                                                    onClick={() => hmdaApprovalRef.current?.click()}
+                                                    className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.hmdaApprovalDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                >
+                                                    <input type="file" ref={hmdaApprovalRef} className="hidden" onChange={(e) => handleFileChange(e, 'hmdaApprovalDoc')} />
+                                                    {formData.hmdaApprovalDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-center h-full min-h-[120px]">
+                                        <button
+                                            onClick={handleAddAdditionalApproval}
+                                            className="w-full h-full border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-3  border-primary/30 bg-slate-50 text-primary transition-all group"
+                                        >
+                                            <div className="p-3  rounded-xl bg-primary text-white">
+                                                <Plus size={20} />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Add More Approval</span>
+                                        </button>
+                                    </div>
+
+                                    {formData.additionalApprovals.map((approval, index) => (
+                                        <div key={index} className="space-y-4 p-4 border-2 border-dashed border-slate-100 rounded-2xl relative group col-span-1 md:col-span-2 lg:col-span-1">
+                                            <button
+                                                onClick={() => handleDeleteAdditionalApproval(index)}
+                                                className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg shadow-rose-200 z-10"
+                                            >
+                                                <Trash2 size={12} />
+                                            </button>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Title</p>
+                                                <input
+                                                    type="text"
+                                                    value={approval.title}
+                                                    onChange={(e) => handleUpdateAdditionalApproval(index, 'title', e.target.value)}
+                                                    className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                    placeholder="e.g. Fire Safety, Environmental"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-1 gap-4">
+                                                <div className="space-y-2">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Number</p>
+                                                    <input
+                                                        type="text"
+                                                        value={approval.number}
+                                                        onChange={(e) => handleUpdateAdditionalApproval(index, 'number', e.target.value)}
+                                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                        placeholder="No."
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Document</p>
+                                                    <div
+                                                        onClick={() => {
+                                                            const input = document.getElementById(`additional-doc-${index}`);
+                                                            input?.click();
+                                                        }}
+                                                        className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${approval.doc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                    >
+                                                        <input
+                                                            type="file"
+                                                            id={`additional-doc-${index}`}
+                                                            className="hidden"
+                                                            onChange={(e) => handleAdditionalApprovalFileChange(e, index)}
+                                                        />
+                                                        {approval.doc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </section>
 
                         {/* RERA Section */}
-                        <section className="pt-10 border-t border-slate-100">
-                            <div className="flex items-center gap-2 mb-6">
-                                <ShieldCheck className="text-emerald-500" size={18} />
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">RERA Certification</h3>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload RERA Certificate</p>
-                                    <div
-                                        onClick={() => reraCertRef.current?.click()}
-                                        className="py-2 flex flex-row items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50  cursor-pointer hover:bg-white hover:border-primary/50 transition-all overflow-hidden relative"
-                                    >
-                                        <input type="file" ref={reraCertRef} className="hidden" onChange={(e) => handleFileChange(e, 'reraCertificate')} />
-                                        {formData.reraCertificate ? (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold text-[10px] uppercase tracking-widest text-center px-4">
-                                                <CheckCircle size={14} className="mr-1" /> Certificate Attached
-                                            </div>
-                                        ) : (
-                                            <>
-                                                <UploadCloud size={20} className="text-slate-300 mb-1" />
-                                                <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Click to upload</span>
-                                            </>
-                                        )}
+                        <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isReraExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
+                            <button
+                                onClick={() => setIsReraExpanded(!isReraExpanded)}
+                                className="flex items-center justify-between w-full group transition-all"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <ShieldCheck className="text-emerald-500" size={18} />
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">RERA Certification</h3>
+                                    {!isReraExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
+                                </div>
+                                <div className={`p-1.5 rounded-lg border transition-all ${isReraExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
+                                    <ChevronDown size={14} />
+                                </div>
+                            </button>
+
+                            {isReraExpanded && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">RERA Number</p>
+                                        <input
+                                            type="text"
+                                            value={formData.reraNumber}
+                                            onChange={(e) => handleChange('reraNumber', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none transition-all"
+                                            placeholder="e.g. P0220000..."
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload RERA Certificate</p>
+                                        <div
+                                            onClick={() => reraCertRef.current?.click()}
+                                            className="py-2 flex flex-row items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50  cursor-pointer hover:bg-white hover:border-primary/50 transition-all overflow-hidden relative"
+                                        >
+                                            <input type="file" ref={reraCertRef} className="hidden" onChange={(e) => handleFileChange(e, 'reraCertificate')} />
+                                            {formData.reraCertificate ? (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold text-[10px] uppercase tracking-widest text-center px-4">
+                                                    <CheckCircle size={14} className="mr-1" /> Certificate Attached
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <UploadCloud size={20} className="text-slate-300 mb-1" />
+                                                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Click to upload</span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">RERA Expiry Date</p>
+                                        <input
+                                            type="date"
+                                            value={formData.reraExpiry}
+                                            onChange={(e) => handleChange('reraExpiry', e.target.value)}
+                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                        />
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">RERA Expiry Date</p>
-                                    <input
-                                        type="date"
-                                        value={formData.reraExpiry}
-                                        onChange={(e) => handleChange('reraExpiry', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                    />
-                                </div>
-                            </div>
+                            )}
                         </section>
 
                         {/* Category Specifications */}
                         {/* SECTION: RESIDENTIAL (MULTI-UNIT) & STANDALONE */}
-                        {(isResidential || isStandalone) && (
-                            <section className="pt-10 border-t border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <div className="flex items-center gap-2 mb-6">
+                        {/* Category Specifications */}
+                        <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isSpecsExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
+                            <button
+                                onClick={() => setIsSpecsExpanded(!isSpecsExpanded)}
+                                className="flex items-center justify-between w-full group transition-all"
+                            >
+                                <div className="flex items-center gap-2">
                                     <Layout className="text-blue-500" size={18} />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">
-                                        {isStandalone ? 'Villa / House Specifications' : 'Building Specifications'}
+                                        {isStandalone ? 'Villa / House Specifications' : isLand ? 'Land Specifications' : isCommercial ? 'Commercial Specifications' : 'Building Specifications'}
                                     </h3>
+                                    {!isSpecsExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
                                 </div>
+                                <div className={`p-1.5 rounded-lg border transition-all ${isSpecsExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
+                                    <ChevronDown size={14} />
+                                </div>
+                            </button>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                    <div className="space-y-6">
-                                        {isStandalone && (
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="space-y-2">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Total Plot Area</p>
-                                                    <div className="flex">
-                                                        <input type="text" value={formData.plotArea} onChange={(e) => handleChange('plotArea', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-l-xl text-xs font-bold outline-none" placeholder="Area" />
-                                                        <select value={formData.plotAreaUnit} onChange={(e) => handleChange('plotAreaUnit', e.target.value)} className="bg-slate-100 border border-l-0 border-slate-200 rounded-r-xl px-2 text-[10px] font-bold outline-none">
-                                                            <option value="Sq. Yards">Sq.Yd</option>
-                                                            <option value="Sft">Sft</option>
+                            {isSpecsExpanded && (
+                                <div className="mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
+                                    {/* SECTION: RESIDENTIAL (MULTI-UNIT) & STANDALONE */}
+                                    {(isResidential || isStandalone) && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                            <div className="space-y-6">
+                                                {isStandalone && (
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="space-y-2">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Total Plot Area</p>
+                                                            <div className="flex">
+                                                                <input type="text" value={formData.plotArea} onChange={(e) => handleChange('plotArea', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-l-xl text-xs font-bold outline-none" placeholder="Area" />
+                                                                <select value={formData.plotAreaUnit} onChange={(e) => handleChange('plotAreaUnit', e.target.value)} className="bg-slate-100 border border-l-0 border-slate-200 rounded-r-xl px-2 text-[10px] font-bold outline-none">
+                                                                    <option value="Sq. Yards">Sq.Yd</option>
+                                                                    <option value="Sft">Sft</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Built-up Area (Sft)</p>
+                                                            <input type="text" value={formData.builtUpArea} onChange={(e) => handleChange('builtUpArea', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Sft" />
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Number of Floors</p>
+                                                        <input type="number" value={formData.numberOfFloors} onChange={(e) => handleChange('numberOfFloors', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Total Floors" />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Facing</p>
+                                                        <select value={formData.facing} onChange={(e) => handleChange('facing', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none">
+                                                            {FACING_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                                         </select>
                                                     </div>
                                                 </div>
+
                                                 <div className="space-y-2">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Built-up Area (Sft)</p>
-                                                    <input type="text" value={formData.builtUpArea} onChange={(e) => handleChange('builtUpArea', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Sft" />
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Vastu Compliant</p>
+                                                    <div className="flex gap-2">
+                                                        {['No', 'Yes'].map(option => (
+                                                            <button key={option} onClick={() => handleChange('vastuCompliant', option)} className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold border transition-all ${formData.vastuCompliant === option ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-2 border-slate-200 text-slate-800 hover:border-slate-300'}`}>
+                                                                {option}
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        )}
 
-                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-4">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Config & Sizes (Total Sft)</p>
+                                                <div className="grid grid-cols-2 gap-x-4 gap-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                                    {Object.keys(formData.flatSizes).map(bhk => (
+                                                        <div key={bhk} className="flex items-center gap-2">
+                                                            <span className="text-[10px] font-bold text-slate-500 min-w-[50px]">{bhk}</span>
+                                                            <input type="text" value={formData.flatSizes[bhk]} onChange={(e) => handleNestedChange('flatSizes', bhk, e.target.value)} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold outline-none" placeholder="Sft" />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {/* SECTION: LAND / PLOTS */}
+                                    {isLand && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Number of Floors</p>
-                                                <input type="number" value={formData.numberOfFloors} onChange={(e) => handleChange('numberOfFloors', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Total Floors" />
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Total Area</p>
+                                                <div className="flex">
+                                                    <input type="text" value={formData.totalArea} onChange={(e) => handleChange('totalArea', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-l-xl text-xs font-bold outline-none" placeholder="Value" />
+                                                    <select value={formData.totalAreaUnit} onChange={(e) => handleChange('totalAreaUnit', e.target.value)} className="bg-slate-100 border border-l-0 border-slate-200 rounded-r-xl px-2 text-[10px] font-bold outline-none">
+                                                        {LAND_AREA_UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Facing</p>
+                                                <select value={formData.facing} onChange={(e) => handleChange('facing', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none">
+                                                    {FACING_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Road Width (ft)</p>
+                                                <input type="text" value={formData.roadWidth} onChange={(e) => handleChange('roadWidth', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="e.g. 40 ft" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Dimensions (L x W)</p>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <input type="text" value={formData.dimensions.length} onChange={(e) => handleNestedChange('dimensions', 'length', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Length" />
+                                                    <input type="text" value={formData.dimensions.width} onChange={(e) => handleNestedChange('dimensions', 'width', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Width" />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Boundary Wall</p>
+                                                <div className="flex gap-2">
+                                                    {['Yes', 'No'].map(option => (
+                                                        <button key={option} onClick={() => handleChange('boundaryWall', option)} className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold border transition-all ${formData.boundaryWall === option ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-2 border-slate-200 text-slate-800 hover:border-slate-300'}`}>
+                                                            {option}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* SECTION: COMMERCIAL */}
+                                    {isCommercial && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Floor Number</p>
+                                                <input type="text" value={formData.numberOfFloors} onChange={(e) => handleChange('numberOfFloors', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Floor No." />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Commercial Type</p>
+                                                <select value={formData.commercialType} onChange={(e) => handleChange('commercialType', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none">
+                                                    {COMMERCIAL_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Washrooms</p>
+                                                <select value={formData.washrooms} onChange={(e) => handleChange('washrooms', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none">
+                                                    <option value="Private">Private</option>
+                                                    <option value="Shared">Shared</option>
+                                                    <option value="None">None</option>
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Total Area (Sft)</p>
+                                                <input type="text" value={formData.builtUpArea} onChange={(e) => handleChange('builtUpArea', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Sft" />
                                             </div>
                                             <div className="space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Facing</p>
@@ -971,123 +1166,10 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                                 </select>
                                             </div>
                                         </div>
-
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Vastu Compliant</p>
-                                            <div className="flex gap-2">
-                                                {['No', 'Yes'].map(option => (
-                                                    <button key={option} onClick={() => handleChange('vastuCompliant', option)} className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold border transition-all ${formData.vastuCompliant === option ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-2 border-slate-200 text-slate-800 hover:border-slate-300'}`}>
-                                                        {option}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Config & Sizes (Total Sft)</p>
-                                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                            {Object.keys(formData.flatSizes).map(bhk => (
-                                                <div key={bhk} className="flex items-center gap-2">
-                                                    <span className="text-[10px] font-bold text-slate-500 min-w-[50px]">{bhk}</span>
-                                                    <input type="text" value={formData.flatSizes[bhk]} onChange={(e) => handleNestedChange('flatSizes', bhk, e.target.value)} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold outline-none" placeholder="Sft" />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
-                            </section>
-                        )}
-
-                        {/* SECTION: LAND / PLOTS */}
-                        {isLand && (
-                            <section className="pt-10 border-t border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <div className="flex items-center gap-2 mb-6">
-                                    <MapPin className="text-emerald-500" size={18} />
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Land Specifications</h3>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Total Area</p>
-                                        <div className="flex">
-                                            <input type="text" value={formData.totalArea} onChange={(e) => handleChange('totalArea', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-l-xl text-xs font-bold outline-none" placeholder="Value" />
-                                            <select value={formData.totalAreaUnit} onChange={(e) => handleChange('totalAreaUnit', e.target.value)} className="bg-slate-100 border border-l-0 border-slate-200 rounded-r-xl px-2 text-[10px] font-bold outline-none">
-                                                {LAND_AREA_UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Facing</p>
-                                        <select value={formData.facing} onChange={(e) => handleChange('facing', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none">
-                                            {FACING_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Road Width (ft)</p>
-                                        <input type="text" value={formData.roadWidth} onChange={(e) => handleChange('roadWidth', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="e.g. 40 ft" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Dimensions (L x W)</p>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <input type="text" value={formData.dimensions.length} onChange={(e) => handleNestedChange('dimensions', 'length', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Length" />
-                                            <input type="text" value={formData.dimensions.width} onChange={(e) => handleNestedChange('dimensions', 'width', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Width" />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Boundary Wall</p>
-                                        <div className="flex gap-2">
-                                            {['Yes', 'No'].map(option => (
-                                                <button key={option} onClick={() => handleChange('boundaryWall', option)} className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold border transition-all ${formData.boundaryWall === option ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-2 border-slate-200 text-slate-800 hover:border-slate-300'}`}>
-                                                    {option}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        )}
-
-                        {/* SECTION: COMMERCIAL */}
-                        {isCommercial && (
-                            <section className="pt-10 border-t border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <div className="flex items-center gap-2 mb-6">
-                                    <Building className="text-blue-500" size={18} />
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Commercial Specifications</h3>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Floor Number</p>
-                                        <input type="text" value={formData.numberOfFloors} onChange={(e) => handleChange('numberOfFloors', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Floor No." />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Commercial Type</p>
-                                        <select value={formData.commercialType} onChange={(e) => handleChange('commercialType', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none">
-                                            {COMMERCIAL_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Washrooms</p>
-                                        <select value={formData.washrooms} onChange={(e) => handleChange('washrooms', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none">
-                                            <option value="Private">Private</option>
-                                            <option value="Shared">Shared</option>
-                                            <option value="None">None</option>
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Total Area (Sft)</p>
-                                        <input type="text" value={formData.builtUpArea} onChange={(e) => handleChange('builtUpArea', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Sft" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Facing</p>
-                                        <select value={formData.facing} onChange={(e) => handleChange('facing', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none">
-                                            {FACING_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                        </select>
-                                    </div>
-                                </div>
-                            </section>
-                        )}
+                            )}
+                        </section>
                         {/* Footer Navigation */}
                         <div className="flex items-center justify-between pt-10 border-t border-slate-100">
                             <button

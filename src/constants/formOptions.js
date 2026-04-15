@@ -25,7 +25,8 @@ export const BAR_COUNCILS = [
     "Arunachal Pradesh (combined for the Northeast)",
     "Himachal Pradesh",
     "Uttarakhand",
-    "Jammu & Kashmir and Ladakh"
+    "Jammu & Kashmir",
+    "Ladakh"
 ];
 
 export const APPROVAL_AUTHORITIES = [
