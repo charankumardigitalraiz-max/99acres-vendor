@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     User, Building, MapPin, IndianRupee, Image as ImageIcon,
     ShieldCheck, Check, Layout, Calendar, Play, Plus, UploadCloud, Trash2, Smartphone, CheckCircle, ArrowRight, Lock,
-    FileText, Briefcase, Phone, Mail, Award, Info, FileStack, Camera, Video, ChevronLeft
+    FileText, Briefcase, Phone, Mail, Award, Info, FileStack, Camera, Video, ChevronLeft,
+    Waves, Dumbbell, Zap, Car, ArrowUpCircle, Users, Trees, Activity, Droplets, CloudRain
 } from 'lucide-react';
 import Modal from './Modal';
 import {
@@ -54,14 +55,17 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
         // Step 3: Technical Specs & Permits
         approvalLetters: [],
         layoutPermissionNumber: '',
+        layoutPermissionDoc: null,
         buildingPermissionNumber: '',
+        buildingPermissionDoc: null,
         hmdaApprovalNumber: '',
+        hmdaApprovalDoc: null,
         reraCertificate: null,
         reraExpiry: '',
 
         // Specialized Specs (Conditionally used based on propertyType)
         numberOfFloors: '',
-        vastuCompliant: 'Yes',
+        vastuCompliant: 'No',
         facing: FACING_OPTIONS[0],
 
         // For Multi-unit & Standalone
@@ -97,7 +101,8 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
             totalPrice: '',
             pricePerSft: '',
             pricePerAcre: '',
-            pricePerSqYard: ''
+            pricePerSqYard: '',
+            priceUnit: 'Sft'
         },
         stampDuty: STAMP_DUTY_OPTIONS[0],
         gstStatus: GST_OPTIONS[0],
@@ -114,7 +119,6 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
     const [lightboxMedia, setLightboxMedia] = useState(null);
     const [isStep1Completed, setIsStep1Completed] = useState(false);
     const [isStep2Completed, setIsStep2Completed] = useState(false);
-    const [isStep3Completed, setIsStep3Completed] = useState(false);
     const isResidential = ['Apartment', 'Builder floor Apartments', 'Penthouse', 'Studio Flat'].includes(formData.propertyType);
     const isStandalone = ['Residential House / Individual House', 'Villa Project', 'Farm House'].includes(formData.propertyType);
     const isLand = ['Residential Plot', 'Agriculture Land', 'Land for Development'].includes(formData.propertyType);
@@ -172,18 +176,97 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
 
     // File Input Refs
     const idCardRef = useRef(null);
+    const layoutPermissionRef = useRef(null);
+    const buildingPermissionRef = useRef(null);
+    const hmdaApprovalRef = useRef(null);
     const approvalLettersRef = useRef(null);
     const reraCertRef = useRef(null);
     const posterRef = useRef(null);
     const photosRef = useRef(null);
     const videoRef = useRef(null);
+    const aboutCompanyRef = useRef(null);
+
+    const handleSaveDraft = () => {
+        onSubmit({ ...formData, status: 'draft' });
+    };
+
+    // Auto-resize textarea for About Company
+    useEffect(() => {
+        if (aboutCompanyRef.current) {
+            aboutCompanyRef.current.style.height = 'auto';
+            aboutCompanyRef.current.style.height = `${aboutCompanyRef.current.scrollHeight}px`;
+        }
+    }, [formData.aboutCompany]);
+
+    // Amenities Icon Mapping
+    const AMENITY_ICONS = {
+        "Swimming Pool": <Waves size={16} />,
+        "Gymnasium": <Dumbbell size={16} />,
+        "Power Backup": <Zap size={16} />,
+        "24/7 Security": <ShieldCheck size={16} />,
+        "Car Parking": <Car size={16} />,
+        "Elevator / Lift": <ArrowUpCircle size={16} />,
+        "Club House": <Users size={16} />,
+        "Park / Play Area": <Trees size={16} />,
+        "Jogging Track": <Activity size={16} />,
+        "Water Supply (24/7)": <Droplets size={16} />,
+        "Rain Water Harvesting": <CloudRain size={16} />,
+        "CCTV Surveillance": <Video size={16} />
+    };
 
     const steps = [
         { id: 1, title: 'Professional Profile', icon: <User size={16} /> },
-        { id: 2, title: 'Project & Property', icon: <Building size={16} /> },
-        { id: 3, title: 'Specs & Permits', icon: <FileText size={16} /> },
-        { id: 4, title: 'Financials & Media', icon: <IndianRupee size={16} /> }
+        { id: 2, title: 'Property Details', icon: <Building size={16} /> },
+        { id: 3, title: 'Financials & Media', icon: <IndianRupee size={16} /> }
     ];
+
+    // Previous Projects Modal State
+    const [showProjectModal, setShowProjectModal] = useState(false);
+    const [editingProjectIndex, setEditingProjectIndex] = useState(null);
+    const [currentProject, setCurrentProject] = useState({
+        name: '',
+        location: '',
+        type: PROJECT_TYPES[0],
+        image: null
+    });
+
+    const handleOpenProjectModal = (index = null) => {
+        if (index !== null) {
+            setEditingProjectIndex(index);
+            setCurrentProject({ ...formData.previousProjects[index] });
+        } else {
+            setEditingProjectIndex(null);
+            setCurrentProject({
+                name: '',
+                location: '',
+                type: PROJECT_TYPES[0],
+                image: null
+            });
+        }
+        setShowProjectModal(true);
+    };
+
+    const handleProjectImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setCurrentProject(prev => ({ ...prev, image: url }));
+        }
+    };
+
+    const handleSaveProject = () => {
+        if (!currentProject.name || !currentProject.location) return;
+
+        const updatedProjects = [...formData.previousProjects];
+        if (editingProjectIndex !== null) {
+            updatedProjects[editingProjectIndex] = currentProject;
+        } else {
+            updatedProjects.push(currentProject);
+        }
+
+        handleChange('previousProjects', updatedProjects);
+        setShowProjectModal(false);
+    };
 
     return (
         <div className="bg-white border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden flex flex-col">
@@ -192,8 +275,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                 {steps.map((step, index) => {
                     const isLocked = step.id === 1 ? false :
                         step.id === 2 ? !isStep1Completed :
-                            step.id === 3 ? !isStep2Completed :
-                                step.id === 4 ? !isStep3Completed : false;
+                            step.id === 3 ? !isStep2Completed : false;
 
                     return (
                         <React.Fragment key={step.id}>
@@ -250,7 +332,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                         placeholder="Enter company name"
                                     />
                                 </div>
-                                <div className="space-y-2">
+                                {/* <div className="space-y-2">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">First Name</p>
                                     <input
                                         type="text"
@@ -259,15 +341,15 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                         className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                         placeholder="First Name"
                                     />
-                                </div>
+                                </div> */}
                                 <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Last Name</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Contact Person Full Name</p>
                                     <input
                                         type="text"
                                         value={formData.personalDetails.contactPersonName.lastName}
                                         onChange={(e) => handleDeepNestedChange('personalDetails', 'contactPersonName', 'lastName', e.target.value)}
                                         className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Last Name"
+                                        placeholder="Enter the Full name"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -290,23 +372,80 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                         placeholder="Email Address"
                                     />
                                 </div>
-                                <div className="space-y-2">
+                                {/* <div className="space-y-2">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">GST Number</p>
                                     <input
-                                        type="text"
+                                         type="text"
                                         value={formData.personalDetails.gstNumber}
                                         onChange={(e) => handleNestedChange('personalDetails', 'gstNumber', e.target.value)}
                                         className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                         placeholder="GST Registration No."
                                     />
-                                </div>
+                                </div> */}
                                 <div className="md:col-span-2 space-y-2">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Address</p>
-                                    <textarea
+                                    <input
+                                        type="text"
                                         value={formData.personalDetails.address}
                                         onChange={(e) => handleNestedChange('personalDetails', 'address', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all h-20 resize-none"
+                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                         placeholder="Full business address"
+                                    />
+                                </div>
+
+                            </div>
+                        </section>
+
+                        {/* Legal Advisor */}
+                        <section className="pt-10 border-t border-slate-100">
+                            <div className="flex items-center gap-2 mb-6">
+                                <Award className="text-primary" size={18} />
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Legal Advisor</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
+                                        Full Name</p>
+                                    <input
+                                        type="text"
+                                        value={formData.legalAdvisor.lastName}
+                                        onChange={(e) => handleNestedChange('legalAdvisor', 'lastName', e.target.value)}
+                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                        placeholder="Legal Advisor's Full Name"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Enroll Number</p>
+                                    <input
+                                        type="text"
+                                        value={formData.legalAdvisor.rollNumber}
+                                        onChange={(e) => handleNestedChange('legalAdvisor', 'rollNumber', e.target.value)}
+                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                        placeholder="Bar Roll Number"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Member of (Bar Council)</p>
+                                    <select
+                                        value={formData.legalAdvisor.memberOf}
+                                        onChange={(e) => handleNestedChange('legalAdvisor', 'memberOf', e.target.value)}
+                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                    >
+                                        {BAR_COUNCILS.map(council => (
+                                            <option key={council} value={council}>{council}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Contact Number</p>
+                                    <input
+                                        type="tel"
+                                        value={formData.legalAdvisor.contactNumber}
+                                        onChange={(e) => handleNestedChange('legalAdvisor', 'contactNumber', e.target.value)}
+                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                        placeholder="Legal Advisor's Phone"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -331,68 +470,6 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                             </div>
                         </section>
 
-                        {/* Legal Advisor */}
-                        <section className="pt-10 border-t border-slate-100">
-                            <div className="flex items-center gap-2 mb-6">
-                                <Award className="text-primary" size={18} />
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Legal Advisor</h3>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">First Name</p>
-                                    <input
-                                        type="text"
-                                        value={formData.legalAdvisor.firstName}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'firstName', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Legal Advisor's First Name"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Last Name</p>
-                                    <input
-                                        type="text"
-                                        value={formData.legalAdvisor.lastName}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'lastName', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Legal Advisor's Last Name"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Roll Number</p>
-                                    <input
-                                        type="text"
-                                        value={formData.legalAdvisor.rollNumber}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'rollNumber', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Bar Roll Number"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Contact Number</p>
-                                    <input
-                                        type="tel"
-                                        value={formData.legalAdvisor.contactNumber}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'contactNumber', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="Legal Advisor's Phone"
-                                    />
-                                </div>
-                                <div className="md:col-span-2 space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Member of (Bar Council)</p>
-                                    <select
-                                        value={formData.legalAdvisor.memberOf}
-                                        onChange={(e) => handleNestedChange('legalAdvisor', 'memberOf', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                    >
-                                        {BAR_COUNCILS.map(council => (
-                                            <option key={council} value={council}>{council}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                        </section>
-
                         {/* Departments */}
                         <div className="grid grid-cols-1 lg:grid-cols-1 gap-10 pt-10 border-t border-slate-100">
                             {/* Sales Dept */}
@@ -402,12 +479,12 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Sales Department</h3>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="space-y-2">
+                                    {/* <div className="space-y-2">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">First Name</p>
                                         <input type="text" value={formData.salesDept.firstName} onChange={(e) => handleNestedChange('salesDept', 'firstName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="First Name" />
-                                    </div>
+                                    </div> */}
                                     <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Last Name</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Full Name</p>
                                         <input type="text" value={formData.salesDept.lastName} onChange={(e) => handleNestedChange('salesDept', 'lastName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Last Name" />
                                     </div>
                                     <div className="space-y-2">
@@ -428,13 +505,13 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Loan Department</h3>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="space-y-2">
+                                    {/* <div className="space-y-2">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">First Name</p>
                                         <input type="text" value={formData.loanDept.firstName} onChange={(e) => handleNestedChange('loanDept', 'firstName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="First Name" />
-                                    </div>
+                                    </div> */}
                                     <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Last Name</p>
-                                        <input type="text" value={formData.loanDept.lastName} onChange={(e) => handleNestedChange('loanDept', 'lastName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Last Name" />
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Full Name</p>
+                                        <input type="text" value={formData.loanDept.lastName} onChange={(e) => handleNestedChange('loanDept', 'lastName', e.target.value)} className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="Enter the Full name" />
                                     </div>
                                     <div className="space-y-2">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Phone</p>
@@ -453,63 +530,73 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-2">
                                     <FileStack className="text-orange-500" size={18} />
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Previous Projects Completed</h3>
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Previous Projects Completed if Any</h3>
                                 </div>
-                                <button
-                                    onClick={() => setFormData(prev => ({ ...prev, previousProjects: [...prev.previousProjects, { name: '', location: '', type: PROJECT_TYPES[0] }] }))}
+                                {/* <button
+                                    onClick={() => handleOpenProjectModal()}
                                     className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary transition-all active:scale-95"
                                 >
                                     <Plus size={14} /> Add Project
-                                </button>
+                                </button> */}
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {formData.previousProjects.map((project, index) => (
-                                    <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 relative group">
-                                        <div className="space-y-1.5">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Project Name</p>
-                                            <input type="text" value={project.name} onChange={(e) => {
-                                                const newProjects = [...formData.previousProjects];
-                                                newProjects[index].name = e.target.value;
-                                                handleChange('previousProjects', newProjects);
-                                            }} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold outline-none" />
+                                    <div key={index} className="group relative bg-white border border-slate-100 rounded-2xl p-3 flex items-center gap-4 hover:border-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+                                        <div className="w-14 h-14 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                            {project.image ? (
+                                                <img src={project.image} alt={project.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="text-slate-200">
+                                                    <ImageIcon size={20} strokeWidth={1.5} />
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="space-y-1.5">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Location (City, State)</p>
-                                            <input type="text" value={project.location} onChange={(e) => {
-                                                const newProjects = [...formData.previousProjects];
-                                                newProjects[index].location = e.target.value;
-                                                handleChange('previousProjects', newProjects);
-                                            }} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold outline-none" />
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                                <span className="px-1.5 py-0.5 bg-slate-50 text-slate-400 rounded-md text-[7px] font-black uppercase tracking-widest border border-slate-100">{project.type}</span>
+                                            </div>
+                                            <h4 className="text-[11px] font-black text-slate-800 truncate leading-tight">{project.name}</h4>
+                                            <div className="flex items-center gap-1 mt-1 text-slate-400">
+                                                <MapPin size={9} />
+                                                <span className="text-[8px] font-bold truncate tracking-wider uppercase">{project.location}</span>
+                                            </div>
                                         </div>
-                                        <div className="space-y-1.5">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Type of Project</p>
-                                            <select value={project.type} onChange={(e) => {
-                                                const newProjects = [...formData.previousProjects];
-                                                newProjects[index].type = e.target.value;
-                                                handleChange('previousProjects', newProjects);
-                                            }} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold outline-none">
-                                                {PROJECT_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                                            </select>
-                                        </div>
-                                        <div className="flex items-end pb-1">
+                                        <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                            <button
+                                                onClick={() => handleOpenProjectModal(index)}
+                                                className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                                                title="Edit"
+                                            >
+                                                <Camera size={12} />
+                                            </button>
                                             <button
                                                 onClick={() => {
                                                     const newProjects = formData.previousProjects.filter((_, i) => i !== index);
                                                     handleChange('previousProjects', newProjects);
                                                 }}
-                                                className="w-full py-2 bg-rose-50 text-rose-500 rounded-lg border border-rose-100 hover:bg-rose-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest"
+                                                className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                                title="Remove"
                                             >
-                                                <Trash2 size={12} className="inline mr-1" /> Remove
+                                                <Trash2 size={12} />
                                             </button>
                                         </div>
                                     </div>
                                 ))}
+
                                 {formData.previousProjects.length === 0 && (
-                                    <div className="py-10 border-2 border-dashed border-slate-100 rounded-[2rem] flex flex-col items-center justify-center text-slate-600">
-                                        <Info size={24} className="mb-2 opacity-20" />
-                                        <p className="text-[10px] font-black uppercase tracking-widest">No previous projects added</p>
-                                    </div>
+                                    <button
+                                        onClick={() => handleOpenProjectModal()}
+                                        className="col-span-full group border-2 border-dashed border-slate-100 rounded-2xl p-4 flex items-center justify-center gap-4 hover:border-primary/30 hover:bg-slate-50/50 transition-all duration-500 cursor-pointer"
+                                    >
+                                        <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white group-hover:border-primary group-hover:rotate-90 transition-all duration-500">
+                                            <Plus size={20} />
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-0.5">Add Your First Project</p>
+                                            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">Click here to showcase your completions</p>
+                                        </div>
+                                    </button>
                                 )}
                             </div>
                         </section>
@@ -523,9 +610,11 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                             <div className="space-y-2">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Short Writeup (Min 1000 words space provided)</p>
                                 <textarea
+                                    ref={aboutCompanyRef}
                                     value={formData.aboutCompany}
                                     onChange={(e) => handleChange('aboutCompany', e.target.value)}
-                                    className="w-full px-6 py-5 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-[2.5rem] text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all h-60 resize-none leading-relaxed"
+                                    rows={3}
+                                    className="w-full px-6 py-5 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-[1.3rem] text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none leading-relaxed overflow-hidden"
                                     placeholder="Enter details about your company, achievements, and vision..."
                                 />
                                 <div className="flex justify-end">
@@ -537,7 +626,13 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                         </section>
 
                         {/* Footer Navigation */}
-                        <div className="flex items-center justify-end pt-10 border-t border-slate-100">
+                        <div className="flex items-center justify-end gap-3 pt-10 border-t border-slate-100">
+                            <button
+                                onClick={handleSaveDraft}
+                                className="px-5 py-3 bg-white border-2 border-slate-200 text-slate-600 rounded-[2rem] text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 flex items-center gap-2"
+                            >
+                                <FileText size={16} /> Save as Draft
+                            </button>
                             <button
                                 onClick={() => {
                                     setIsStep1Completed(true);
@@ -545,7 +640,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 }}
                                 className="px-5 py-3 bg-primary text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-3"
                             >
-                                Continue to Project Details <ArrowRight size={16} />
+                                Continue to Property Details <ArrowRight size={16} />
                             </button>
                         </div>
                     </div>
@@ -611,68 +706,91 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                             </div>
                         </section>
 
-                        {/* Footer Navigation */}
-                        <div className="flex items-center justify-between pt-10 border-t border-slate-100">
-                            <button
-                                onClick={() => setOpenStep(1)}
-                                className="px-5 py-3 border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
-                            >
-                                <ChevronLeft size={14} /> Previous Step
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setIsStep2Completed(true);
-                                    setOpenStep(3);
-                                }}
-                                className="px-5 py-3 bg-primary text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-3"
-                            >
-                                Continue to Specs & Permits <ArrowRight size={16} />
-                            </button>
-                        </div>
-                    </div>
-                )}
+                        {/* Old Step 3 content merged into Step 2 */}
 
-                {/* STEP 3: TECHNICAL SPECS & PERMITS */}
-                {openStep === 3 && (
-                    <div className="p-8 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
                         {/* Permissions & Numbers */}
-                        <section>
+                        <section className="pt-10 border-t border-slate-100">
                             <div className="flex items-center gap-2 mb-6">
                                 <FileText className="text-primary" size={18} />
                                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Permissions & Approval Numbers</h3>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Layout Permission No.</p>
-                                    <input
-                                        type="text"
-                                        value={formData.layoutPermissionNumber}
-                                        onChange={(e) => handleChange('layoutPermissionNumber', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="No."
-                                    />
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Layout Permission No.</p>
+                                            <input
+                                                type="text"
+                                                value={formData.layoutPermissionNumber}
+                                                onChange={(e) => handleChange('layoutPermissionNumber', e.target.value)}
+                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                placeholder="No."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Layout Document</p>
+                                            <div
+                                                onClick={() => layoutPermissionRef.current?.click()}
+                                                className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.layoutPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                            >
+                                                <input type="file" ref={layoutPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'layoutPermissionDoc')} />
+                                                {formData.layoutPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Building Permission No.</p>
-                                    <input
-                                        type="text"
-                                        value={formData.buildingPermissionNumber}
-                                        onChange={(e) => handleChange('buildingPermissionNumber', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="No."
-                                    />
+
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Building Permission No.</p>
+                                            <input
+                                                type="text"
+                                                value={formData.buildingPermissionNumber}
+                                                onChange={(e) => handleChange('buildingPermissionNumber', e.target.value)}
+                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                placeholder="No."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Building Document</p>
+                                            <div
+                                                onClick={() => buildingPermissionRef.current?.click()}
+                                                className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.buildingPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                            >
+                                                <input type="file" ref={buildingPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'buildingPermissionDoc')} />
+                                                {formData.buildingPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">HMDA Approval Number</p>
-                                    <input
-                                        type="text"
-                                        value={formData.hmdaApprovalNumber}
-                                        onChange={(e) => handleChange('hmdaApprovalNumber', e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        placeholder="No."
-                                    />
+
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">HMDA Approval No.</p>
+                                            <input
+                                                type="text"
+                                                value={formData.hmdaApprovalNumber}
+                                                onChange={(e) => handleChange('hmdaApprovalNumber', e.target.value)}
+                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                placeholder="No."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload HMDA Document</p>
+                                            <div
+                                                onClick={() => hmdaApprovalRef.current?.click()}
+                                                className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.hmdaApprovalDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                            >
+                                                <input type="file" ref={hmdaApprovalRef} className="hidden" onChange={(e) => handleFileChange(e, 'hmdaApprovalDoc')} />
+                                                {formData.hmdaApprovalDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
+
+                                {/* <div className="space-y-2">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Letters</p>
                                     <div
                                         onClick={() => approvalLettersRef.current?.click()}
@@ -682,10 +800,10 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                         {formData.approvalLetters.length > 0 ? (
                                             <span className="text-[10px] font-bold text-emerald-600">{formData.approvalLetters.length} Files Added</span>
                                         ) : (
-                                            <UploadCloud size={16} className="text-slate-300" />
+                                            <UploadCloud size={18} className="text-slate-300" />
                                         )}
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </section>
 
@@ -700,7 +818,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload RERA Certificate</p>
                                     <div
                                         onClick={() => reraCertRef.current?.click()}
-                                        className="h-20 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-white hover:border-primary/50 transition-all overflow-hidden relative"
+                                        className="py-2 flex flex-row items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50  cursor-pointer hover:bg-white hover:border-primary/50 transition-all overflow-hidden relative"
                                     >
                                         <input type="file" ref={reraCertRef} className="hidden" onChange={(e) => handleFileChange(e, 'reraCertificate')} />
                                         {formData.reraCertificate ? (
@@ -727,8 +845,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                             </div>
                         </section>
 
-                        {/* Category Helpers */}
-
+                        {/* Category Specifications */}
                         {/* SECTION: RESIDENTIAL (MULTI-UNIT) & STANDALONE */}
                         {(isResidential || isStandalone) && (
                             <section className="pt-10 border-t border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -776,7 +893,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                         <div className="space-y-2">
                                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Vastu Compliant</p>
                                             <div className="flex gap-2">
-                                                {['Yes', 'No'].map(option => (
+                                                {['No', 'Yes'].map(option => (
                                                     <button key={option} onClick={() => handleChange('vastuCompliant', option)} className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold border transition-all ${formData.vastuCompliant === option ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-2 border-slate-200 text-slate-800 hover:border-slate-300'}`}>
                                                         {option}
                                                     </button>
@@ -889,31 +1006,37 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 </div>
                             </section>
                         )}
-
-
                         {/* Footer Navigation */}
                         <div className="flex items-center justify-between pt-10 border-t border-slate-100">
                             <button
-                                onClick={() => setOpenStep(2)}
+                                onClick={() => setOpenStep(1)}
                                 className="px-5 py-3 border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
                             >
                                 <ChevronLeft size={14} /> Previous Step
                             </button>
-                            <button
-                                onClick={() => {
-                                    setIsStep3Completed(true);
-                                    setOpenStep(4);
-                                }}
-                                className="px-5 py-3 bg-primary text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-3"
-                            >
-                                Continue to Financials & Media <ArrowRight size={16} />
-                            </button>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={handleSaveDraft}
+                                    className="px-5 py-3 bg-white border-2 border-slate-200 text-slate-600 rounded-[2rem] text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 flex items-center gap-2"
+                                >
+                                    <FileText size={16} /> Save as Draft
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIsStep2Completed(true);
+                                        setOpenStep(3);
+                                    }}
+                                    className="px-5 py-3 bg-primary text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-3"
+                                >
+                                    Continue to Financials & Media <ArrowRight size={16} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
 
-                {/* STEP 4: FINANCIALS & MEDIA */}
-                {openStep === 4 && (
+                {/* STEP 3: FINANCIALS & MEDIA */}
+                {openStep === 3 && (
                     <div className="p-8 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
                         {/* Status & Pricing */}
                         <section>
@@ -945,18 +1068,43 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                         />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-3 gap-2 md:col-span-2 lg:col-span-1">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2 lg:col-span-1">
                                     <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Price/Sft</p>
-                                        <input type="text" value={formData.priceDetails.pricePerSft} onChange={(e) => handleNestedChange('priceDetails', 'pricePerSft', e.target.value)} className="w-full px-3 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="₹" />
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Price Unit</p>
+                                        <div className="flex gap-2">
+                                            {['Sft', 'Acre', 'SqYd'].map(unit => (
+                                                <button
+                                                    key={unit}
+                                                    type="button"
+                                                    onClick={() => handleNestedChange('priceDetails', 'priceUnit', unit)}
+                                                    className={`flex-1 py-3 px-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${formData.priceDetails.priceUnit === unit ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-2 border-slate-200 hover:border-slate-300'}`}
+                                                >
+                                                    {unit}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Price/Acre</p>
-                                        <input type="text" value={formData.priceDetails.pricePerAcre} onChange={(e) => handleNestedChange('priceDetails', 'pricePerAcre', e.target.value)} className="w-full px-3 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="₹" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Price/SqYd</p>
-                                        <input type="text" value={formData.priceDetails.pricePerSqYard} onChange={(e) => handleNestedChange('priceDetails', 'pricePerSqYard', e.target.value)} className="w-full px-3 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none" placeholder="₹" />
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Price per {formData.priceDetails.priceUnit}</p>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 font-bold text-[10px]">₹</span>
+                                            <input
+                                                type="text"
+                                                value={
+                                                    formData.priceDetails.priceUnit === 'Sft' ? formData.priceDetails.pricePerSft :
+                                                        formData.priceDetails.priceUnit === 'Acre' ? formData.priceDetails.pricePerAcre :
+                                                            formData.priceDetails.pricePerSqYard
+                                                }
+                                                onChange={(e) => {
+                                                    const field = formData.priceDetails.priceUnit === 'Sft' ? 'pricePerSft' :
+                                                        formData.priceDetails.priceUnit === 'Acre' ? 'pricePerAcre' :
+                                                            'pricePerSqYard';
+                                                    handleNestedChange('priceDetails', field, e.target.value);
+                                                }}
+                                                className="w-full pl-8 pr-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none transition-all"
+                                                placeholder={`Price per ${formData.priceDetails.priceUnit}`}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="space-y-2">
@@ -987,9 +1135,11 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     <Award className="text-emerald-500" size={18} />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Amenities</h3>
                                 </div>
-                                <div className="flex flex-wrap gap-3">
+                                <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-4">
                                     {AMENITIES.map(amenity => {
                                         const isSelected = formData.amenities?.includes(amenity);
+                                        const Icon = AMENITY_ICONS[amenity] || <Award size={16} />;
+
                                         return (
                                             <button
                                                 key={amenity}
@@ -997,9 +1147,21 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                                     const current = formData.amenities || [];
                                                     handleChange('amenities', isSelected ? current.filter(a => a !== amenity) : [...current, amenity]);
                                                 }}
-                                                className={`px-4 py-3 rounded-xl text-[10px] uppercase tracking-widest font-bold border transition-all active:scale-95 ${isSelected ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-300'}`}
+                                                className={`flex flex-row items-center justify-center gap-3 p-2 rounded-[2rem] border-2 transition-all duration-300 relative group active:scale-95 ${isSelected
+                                                    ? 'bg-primary border-primary text-white shadow-xl shadow-primary/20'
+                                                    : 'bg-white border-slate-100 text-slate-600 hover:border-primary/30 hover:bg-slate-50'
+                                                    }`}
                                             >
-                                                {amenity}
+                                                <div className={`p-3 rounded-2xl transition-colors duration-300 ${isSelected ? 'bg-white/20' : 'bg-slate-50 group-hover:bg-primary/10'}`}>
+                                                    {React.cloneElement(Icon, { size: 24, className: isSelected ? 'text-white' : 'text-primary' })}
+                                                </div>
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-center leading-tight">{amenity}</span>
+
+                                                {isSelected && (
+                                                    <div className="absolute top-4 right-4 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-lg shadow-black/10">
+                                                        <Check size={12} className="text-primary" />
+                                                    </div>
+                                                )}
                                             </button>
                                         );
                                     })}
@@ -1017,7 +1179,10 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 {/* Poster & Photos */}
                                 <div className="space-y-6">
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Main Poster Photo</p>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Main Poster Photo</p>
+                                            <span className="text-[12px] font-bold text-slate-400 uppercase whitespace-pre">1280x720 (16:9) Size </span>
+                                        </div>
                                         <div
                                             onClick={() => posterRef.current?.click()}
                                             className="h-40 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition-all overflow-hidden relative group"
@@ -1034,7 +1199,12 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                         </div>
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Property Gallery (5-6 Photos)</p>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Property Gallery (5-6 Photos)</p>
+                                            <span className="text-[12px] font-bold text-slate-400 uppercase whitespace-pre">
+                                                {"Minimum    5"}
+                                            </span>
+                                        </div>
                                         <div className="grid grid-cols-3 gap-2">
                                             {formData.media.photos.map((img, i) => (
                                                 <div key={i} className="aspect-square rounded-xl bg-slate-100 overflow-hidden relative group">
@@ -1061,7 +1231,10 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 {/* Video & Consent */}
                                 <div className="space-y-6">
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Product Video (Max 20MB)</p>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Product Video</p>
+                                            <span className="text-[12px] font-bold text-slate-400 uppercase">Max 20MB | MP4, MOV</span>
+                                        </div>
                                         <div
                                             onClick={() => videoRef.current?.click()}
                                             className="h-40 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition-all overflow-hidden relative group"
@@ -1111,10 +1284,16 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 </div>
                                 <div className="flex items-center gap-3 w-full md:w-auto">
                                     <button
-                                        onClick={() => setOpenStep(3)}
+                                        onClick={() => setOpenStep(2)}
                                         className="flex-1 md:flex-none px-8 py-4 border bg-red-800 border-slate-800 text-white hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all"
                                     >
                                         Back
+                                    </button>
+                                    <button
+                                        onClick={handleSaveDraft}
+                                        className="flex-1 md:flex-none px-5 py-4 bg-slate-800 text-white border border-slate-700 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    >
+                                        <FileText size={16} /> Save Draft
                                     </button>
                                     <button
                                         onClick={() => onSubmit(formData)}
@@ -1128,6 +1307,101 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                     </div>
                 )}
             </div>
+
+            {/* Previous Project Entry Modal */}
+            <Modal
+                isOpen={showProjectModal}
+                onClose={() => setShowProjectModal(false)}
+                title={editingProjectIndex !== null ? "Edit Previous Project" : "Add Previous Project"}
+                size="lg"
+            >
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Project Name</p>
+                            <input
+                                type="text"
+                                value={currentProject.name}
+                                onChange={(e) => setCurrentProject(prev => ({ ...prev, name: e.target.value }))}
+                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                placeholder="e.g. Skyline Residency"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Location (City, State)</p>
+                            <input
+                                type="text"
+                                value={currentProject.location}
+                                onChange={(e) => setCurrentProject(prev => ({ ...prev, location: e.target.value }))}
+                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                placeholder="e.g. Banjara Hills, Hyderabad"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Type of Project</p>
+                            <select
+                                value={currentProject.type}
+                                onChange={(e) => setCurrentProject(prev => ({ ...prev, type: e.target.value }))}
+                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            >
+                                {PROJECT_TYPES.map(type => (
+                                    <option key={type} value={type}>{type}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Project Image</p>
+                            <div
+                                onClick={() => document.getElementById('projectImageInput').click()}
+                                className="h-11 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 flex items-center justify-center cursor-pointer hover:bg-white hover:border-primary/50 transition-all relative overflow-hidden"
+                            >
+                                <input id="projectImageInput" type="file" className="hidden" accept="image/*" onChange={handleProjectImageChange} />
+                                {currentProject.image ? (
+                                    <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] uppercase tracking-widest">
+                                        <CheckCircle size={14} /> Image Selected
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2 text-slate-400">
+                                        <ImageIcon size={16} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Upload Project Image</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {currentProject.image && (
+                        <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-slate-100 bg-slate-50">
+                            <img src={currentProject.image} alt="Preview" className="w-full h-full object-cover" />
+                            <button
+                                onClick={() => setCurrentProject(prev => ({ ...prev, image: null }))}
+                                className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm text-rose-500 rounded-full hover:bg-rose-500 hover:text-white transition-all shadow-lg"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
+                    )}
+
+                    <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
+                        <button
+                            onClick={() => setShowProjectModal(false)}
+                            className="px-6 py-3 border-2 border-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleSaveProject}
+                            disabled={!currentProject.name || !currentProject.location}
+                            className="px-8 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2"
+                        >
+                            {editingProjectIndex !== null ? "Update Project" : "Add Project"}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
 
             {/* Lightbox for Preview */}
             <Modal
