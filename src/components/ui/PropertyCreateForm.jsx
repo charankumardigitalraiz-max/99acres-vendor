@@ -1392,39 +1392,40 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     </p>
                                 </div>
 
-                                {/* Gallery Card */}
-                                <div className="p-4 border-2 border-slate-100 rounded-2xl bg-white hover:border-slate-200 transition-all flex flex-col gap-4 col-span-1 md:col-span-2">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center">
-                                                <ImageIcon size={12} className="text-blue-500" />
-                                            </div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-700">Property Gallery (Min 5)</p>
+
+
+                            </div>
+                            {/* Gallery Card */}
+                            <div className="p-4 border-2 border-slate-100 rounded-2xl bg-white hover:border-slate-200 transition-all flex flex-col gap-4 max-w-lg mt-6">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center">
+                                            <ImageIcon size={12} className="text-blue-500" />
                                         </div>
-                                        <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md uppercase">{formData.media.photos.length} Uploaded</span>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-700">Property Gallery (Min 5)</p>
                                     </div>
-                                    <div className="flex flex-wrap gap-3">
-                                        {formData.media.photos.map((img, i) => (
-                                            <div key={i} className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden relative group shrink-0 shadow-sm border border-slate-200">
-                                                <img src={img} className="w-full h-full object-cover" />
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); handleChange('media', { ...formData.media, photos: formData.media.photos.filter((_, idx) => idx !== i) }); }}
-                                                    className="absolute top-1 right-1 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                >
-                                                    <Plus size={12} className="rotate-45" />
-                                                </button>
-                                            </div>
-                                        ))}
-                                        <div
-                                            onClick={() => photosRef.current?.click()}
-                                            className="w-20 h-20 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 text-slate-300 hover:text-primary transition-all shrink-0 bg-slate-50/50"
-                                        >
-                                            <input type="file" ref={photosRef} className="hidden" multiple onChange={(e) => handleFileChange(e, 'photos', 'media', true)} />
-                                            <Plus size={20} />
+                                    <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md uppercase">{formData.media.photos.length} Uploaded</span>
+                                </div>
+                                <div className="flex flex-wrap gap-3">
+                                    {formData.media.photos.map((img, i) => (
+                                        <div key={i} className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden relative group shrink-0 shadow-sm border border-slate-200">
+                                            <img src={img} className="w-full h-full object-cover" />
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handleChange('media', { ...formData.media, photos: formData.media.photos.filter((_, idx) => idx !== i) }); }}
+                                                className="absolute top-1 right-1 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <Plus size={12} className="rotate-45" />
+                                            </button>
                                         </div>
+                                    ))}
+                                    <div
+                                        onClick={() => photosRef.current?.click()}
+                                        className="w-16 h-16 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 text-slate-300 hover:text-primary transition-all shrink-0 bg-slate-50/50"
+                                    >
+                                        <input type="file" ref={photosRef} className="hidden" multiple onChange={(e) => handleFileChange(e, 'photos', 'media', true)} />
+                                        <Plus size={16} />
                                     </div>
                                 </div>
-
                             </div>
                         </section>
 
