@@ -26,8 +26,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
     const [isSalesExpanded, setIsSalesExpanded] = useState(false);
     const [isLoanExpanded, setIsLoanExpanded] = useState(false);
     const [isLegalExpanded, setIsLegalExpanded] = useState(false);
-    const [isPropertyInfoExpanded, setIsPropertyInfoExpanded] = useState(false);
-    const [isPermissionsExpanded, setIsPermissionsExpanded] = useState(false);
+    const [isPropertyInfoExpanded, setIsPropertyInfoExpanded] = useState(true);
     const [isReraExpanded, setIsReraExpanded] = useState(false);
     const [isSpecsExpanded, setIsSpecsExpanded] = useState(false);
     const [formData, setFormData] = useState(initialData || {
@@ -447,7 +446,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 <div className="flex items-center gap-2">
                                     <Award className="text-primary" size={18} />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Legal Advisor</h3>
-                                    {/* {!isLegalExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>} */}
+                                    {!isLegalExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
                                 </div>
                                 <div className={`p-1.5 rounded-lg border transition-all ${isLegalExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
                                     <ChevronDown size={14} />
@@ -655,7 +654,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 {formData.previousProjects.length === 0 && (
                                     <button
                                         onClick={() => handleOpenProjectModal()}
-                                        className="col-span-full group border-2 border-dashed border-slate-100 rounded-2xl p-4 flex items-center justify-center gap-4 hover:border-primary/30 hover:bg-slate-50/50 transition-all duration-500 cursor-pointer"
+                                        className="col-span-full group border-2 border-dashed  rounded-2xl p-4 flex items-center justify-center gap-4 border-primary/30 hover:bg-slate-50/50 transition-all duration-500 cursor-pointer"
                                     >
                                         <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white group-hover:border-primary group-hover:rotate-90 transition-all duration-500">
                                             <Plus size={20} />
@@ -694,7 +693,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                         </section>
 
                         {/* Footer Navigation */}
-                        <div className="flex items-center justify-end gap-3 pt-10 border-t border-slate-100">
+                        <div className="flex items-center justify-end gap-3 pt-2">
                             <button
                                 onClick={handleSaveDraft}
                                 className="px-5 py-3 bg-white border-2 border-slate-200 text-slate-600 rounded-[2rem] text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 flex items-center gap-2"
@@ -790,166 +789,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
 
                         {/* Old Step 3 content merged into Step 2 */}
 
-                        {/* Permissions & Numbers */}
-                        <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isPermissionsExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
-                            <button
-                                onClick={() => setIsPermissionsExpanded(!isPermissionsExpanded)}
-                                className="flex items-center justify-between w-full group transition-all"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <FileText className="text-primary" size={18} />
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Permissions & Approval Numbers</h3>
-                                    {!isPermissionsExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
-                                </div>
-                                <div className={`p-1.5 rounded-lg border transition-all ${isPermissionsExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
-                                    <ChevronDown size={14} />
-                                </div>
-                            </button>
-
-                            {isPermissionsExpanded && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-1 gap-4">
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Layout Permission No.</p>
-                                                <input
-                                                    type="text"
-                                                    value={formData.layoutPermissionNumber}
-                                                    onChange={(e) => handleChange('layoutPermissionNumber', e.target.value)}
-                                                    className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                    placeholder="No."
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Layout Document</p>
-                                                <div
-                                                    onClick={() => layoutPermissionRef.current?.click()}
-                                                    className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.layoutPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
-                                                >
-                                                    <input type="file" ref={layoutPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'layoutPermissionDoc')} />
-                                                    {formData.layoutPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-1 gap-4">
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Building Permission No.</p>
-                                                <input
-                                                    type="text"
-                                                    value={formData.buildingPermissionNumber}
-                                                    onChange={(e) => handleChange('buildingPermissionNumber', e.target.value)}
-                                                    className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                    placeholder="No."
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Building Document</p>
-                                                <div
-                                                    onClick={() => buildingPermissionRef.current?.click()}
-                                                    className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.buildingPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
-                                                >
-                                                    <input type="file" ref={buildingPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'buildingPermissionDoc')} />
-                                                    {formData.buildingPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-1 gap-4">
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">HMDA Approval No.</p>
-                                                <input
-                                                    type="text"
-                                                    value={formData.hmdaApprovalNumber}
-                                                    onChange={(e) => handleChange('hmdaApprovalNumber', e.target.value)}
-                                                    className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                    placeholder="No."
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload HMDA Document</p>
-                                                <div
-                                                    onClick={() => hmdaApprovalRef.current?.click()}
-                                                    className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.hmdaApprovalDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
-                                                >
-                                                    <input type="file" ref={hmdaApprovalRef} className="hidden" onChange={(e) => handleFileChange(e, 'hmdaApprovalDoc')} />
-                                                    {formData.hmdaApprovalDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center justify-center h-full min-h-[120px]">
-                                        <button
-                                            onClick={handleAddAdditionalApproval}
-                                            className="w-full h-full border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-3  border-primary/30 bg-slate-50 text-primary transition-all group"
-                                        >
-                                            <div className="p-3  rounded-xl bg-primary text-white">
-                                                <Plus size={20} />
-                                            </div>
-                                            <span className="text-[10px] font-black uppercase tracking-widest">Add More Approval</span>
-                                        </button>
-                                    </div>
-
-                                    {formData.additionalApprovals.map((approval, index) => (
-                                        <div key={index} className="space-y-4 p-4 border-2 border-dashed border-slate-100 rounded-2xl relative group col-span-1 md:col-span-2 lg:col-span-1">
-                                            <button
-                                                onClick={() => handleDeleteAdditionalApproval(index)}
-                                                className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg shadow-rose-200 z-10"
-                                            >
-                                                <Trash2 size={12} />
-                                            </button>
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Title</p>
-                                                <input
-                                                    type="text"
-                                                    value={approval.title}
-                                                    onChange={(e) => handleUpdateAdditionalApproval(index, 'title', e.target.value)}
-                                                    className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                    placeholder="e.g. Fire Safety, Environmental"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-1 gap-4">
-                                                <div className="space-y-2">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Number</p>
-                                                    <input
-                                                        type="text"
-                                                        value={approval.number}
-                                                        onChange={(e) => handleUpdateAdditionalApproval(index, 'number', e.target.value)}
-                                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
-                                                        placeholder="No."
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Document</p>
-                                                    <div
-                                                        onClick={() => {
-                                                            const input = document.getElementById(`additional-doc-${index}`);
-                                                            input?.click();
-                                                        }}
-                                                        className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${approval.doc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
-                                                    >
-                                                        <input
-                                                            type="file"
-                                                            id={`additional-doc-${index}`}
-                                                            className="hidden"
-                                                            onChange={(e) => handleAdditionalApprovalFileChange(e, index)}
-                                                        />
-                                                        {approval.doc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </section>
-
-                        {/* RERA Section */}
+                        {/* RERA & Approvals Section */}
                         <section className={`transition-all duration-300 border-2 border-slate-100 rounded-2xl p-4 ${isReraExpanded ? 'bg-slate-50/50 border-primary/20 shadow-sm' : 'hover:border-slate-200'}`}>
                             <button
                                 onClick={() => setIsReraExpanded(!isReraExpanded)}
@@ -957,7 +797,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                             >
                                 <div className="flex items-center gap-2">
                                     <ShieldCheck className="text-emerald-500" size={18} />
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">RERA Certification</h3>
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">RERA & Approvals</h3>
                                     {!isReraExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
                                 </div>
                                 <div className={`p-1.5 rounded-lg border transition-all ${isReraExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
@@ -966,44 +806,192 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                             </button>
 
                             {isReraExpanded && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">RERA Number</p>
-                                        <input
-                                            type="text"
-                                            value={formData.reraNumber}
-                                            onChange={(e) => handleChange('reraNumber', e.target.value)}
-                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none transition-all"
-                                            placeholder="e.g. P0220000..."
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload RERA Certificate</p>
-                                        <div
-                                            onClick={() => reraCertRef.current?.click()}
-                                            className="py-2 flex flex-row items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50  cursor-pointer hover:bg-white hover:border-primary/50 transition-all overflow-hidden relative"
-                                        >
-                                            <input type="file" ref={reraCertRef} className="hidden" onChange={(e) => handleFileChange(e, 'reraCertificate')} />
-                                            {formData.reraCertificate ? (
-                                                <div className="absolute inset-0 flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold text-[10px] uppercase tracking-widest text-center px-4">
-                                                    <CheckCircle size={14} className="mr-1" /> Certificate Attached
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <UploadCloud size={20} className="text-slate-300 mb-1" />
-                                                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Click to upload</span>
-                                                </>
-                                            )}
+                                <div className="space-y-8 mt-8 animate-in fade-in slide-in-from-top-3 duration-500">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">RERA Number</p>
+                                            <input
+                                                type="text"
+                                                value={formData.reraNumber}
+                                                onChange={(e) => handleChange('reraNumber', e.target.value)}
+                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold outline-none transition-all"
+                                                placeholder="e.g. P0220000..."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload RERA Certificate</p>
+                                            <div
+                                                onClick={() => reraCertRef.current?.click()}
+                                                className="py-2 flex flex-row items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50  cursor-pointer hover:bg-white hover:border-primary/50 transition-all overflow-hidden relative"
+                                            >
+                                                <input type="file" ref={reraCertRef} className="hidden" onChange={(e) => handleFileChange(e, 'reraCertificate')} />
+                                                {formData.reraCertificate ? (
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold text-[10px] uppercase tracking-widest text-center px-4">
+                                                        <CheckCircle size={14} className="mr-1" /> Certificate Attached
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <UploadCloud size={20} className="text-slate-300 mb-1" />
+                                                        <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Click to upload</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">RERA Expiry Date</p>
+                                            <input
+                                                type="date"
+                                                value={formData.reraExpiry}
+                                                onChange={(e) => handleChange('reraExpiry', e.target.value)}
+                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                            />
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">RERA Expiry Date</p>
-                                        <input
-                                            type="date"
-                                            value={formData.reraExpiry}
-                                            onChange={(e) => handleChange('reraExpiry', e.target.value)}
-                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                        />
+
+                                    <div className="pt-6 border-t border-slate-100">
+                                        <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-800 mb-6 flex items-center gap-2">
+                                            <FileText className="text-primary" size={16} />
+                                            Permissions & Approval Numbers
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                            <div className="space-y-4">
+                                                <div className="grid grid-cols-1 gap-4">
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Layout Permission No.</p>
+                                                        <input
+                                                            type="text"
+                                                            value={formData.layoutPermissionNumber}
+                                                            onChange={(e) => handleChange('layoutPermissionNumber', e.target.value)}
+                                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                            placeholder="No."
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Layout Document</p>
+                                                        <div
+                                                            onClick={() => layoutPermissionRef.current?.click()}
+                                                            className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.layoutPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                        >
+                                                            <input type="file" ref={layoutPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'layoutPermissionDoc')} />
+                                                            {formData.layoutPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <div className="grid grid-cols-1 gap-4">
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Building Permission No.</p>
+                                                        <input
+                                                            type="text"
+                                                            value={formData.buildingPermissionNumber}
+                                                            onChange={(e) => handleChange('buildingPermissionNumber', e.target.value)}
+                                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                            placeholder="No."
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Building Document</p>
+                                                        <div
+                                                            onClick={() => buildingPermissionRef.current?.click()}
+                                                            className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.buildingPermissionDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                        >
+                                                            <input type="file" ref={buildingPermissionRef} className="hidden" onChange={(e) => handleFileChange(e, 'buildingPermissionDoc')} />
+                                                            {formData.buildingPermissionDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <div className="grid grid-cols-1 gap-4">
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">HMDA Approval No.</p>
+                                                        <input
+                                                            type="text"
+                                                            value={formData.hmdaApprovalNumber}
+                                                            onChange={(e) => handleChange('hmdaApprovalNumber', e.target.value)}
+                                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                            placeholder="No."
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload HMDA Document</p>
+                                                        <div
+                                                            onClick={() => hmdaApprovalRef.current?.click()}
+                                                            className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${formData.hmdaApprovalDoc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                        >
+                                                            <input type="file" ref={hmdaApprovalRef} className="hidden" onChange={(e) => handleFileChange(e, 'hmdaApprovalDoc')} />
+                                                            {formData.hmdaApprovalDoc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center justify-center h-full min-h-[120px]">
+                                                <button
+                                                    onClick={handleAddAdditionalApproval}
+                                                    className="w-full h-full border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-3  border-primary/30 bg-slate-50 text-primary transition-all group"
+                                                >
+                                                    <div className="p-3  rounded-xl bg-primary text-white">
+                                                        <Plus size={20} />
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest">Add More Approval</span>
+                                                </button>
+                                            </div>
+
+                                            {formData.additionalApprovals.map((approval, index) => (
+                                                <div key={index} className="space-y-4 p-4 border-2 border-dashed border-slate-100 rounded-2xl relative group col-span-1 md:col-span-2 lg:col-span-1">
+                                                    <button
+                                                        onClick={() => handleDeleteAdditionalApproval(index)}
+                                                        className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg shadow-rose-200 z-10"
+                                                    >
+                                                        <Trash2 size={12} />
+                                                    </button>
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Title</p>
+                                                        <input
+                                                            type="text"
+                                                            value={approval.title}
+                                                            onChange={(e) => handleUpdateAdditionalApproval(index, 'title', e.target.value)}
+                                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                            placeholder="e.g. Fire Safety, Environmental"
+                                                        />
+                                                    </div>
+                                                    <div className="grid grid-cols-1 gap-4">
+                                                        <div className="space-y-2">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Approval Number</p>
+                                                            <input
+                                                                type="text"
+                                                                value={approval.number}
+                                                                onChange={(e) => handleUpdateAdditionalApproval(index, 'number', e.target.value)}
+                                                                className="w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-800 focus:border-primary focus:bg-slate-50 rounded-xl text-xs font-bold transition-all outline-none"
+                                                                placeholder="No."
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Document</p>
+                                                            <div
+                                                                onClick={() => {
+                                                                    const input = document.getElementById(`additional-doc-${index}`);
+                                                                    input?.click();
+                                                                }}
+                                                                className={`h-11 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${approval.doc ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-white hover:border-primary/30'}`}
+                                                            >
+                                                                <input
+                                                                    type="file"
+                                                                    id={`additional-doc-${index}`}
+                                                                    className="hidden"
+                                                                    onChange={(e) => handleAdditionalApprovalFileChange(e, index)}
+                                                                />
+                                                                {approval.doc ? <CheckCircle size={18} /> : <UploadCloud size={18} />}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -1294,12 +1282,12 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
 
                         {/* Amenities Section */}
                         {(isResidential || isStandalone) && (
-                            <section className="pt-10 border-t border-slate-100">
+                            <section className="pt-3">
                                 <div className="flex items-center gap-2 mb-6">
                                     <Award className="text-emerald-500" size={18} />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Amenities</h3>
                                 </div>
-                                <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                <div className="flex flex-wrap gap-3">
                                     {AMENITIES.map(amenity => {
                                         const isSelected = formData.amenities?.includes(amenity);
                                         const Icon = AMENITY_ICONS[amenity] || <Award size={16} />;
@@ -1311,21 +1299,15 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                                     const current = formData.amenities || [];
                                                     handleChange('amenities', isSelected ? current.filter(a => a !== amenity) : [...current, amenity]);
                                                 }}
-                                                className={`flex flex-row items-center justify-center gap-3 p-2 rounded-[2rem] border-2 transition-all duration-300 relative group active:scale-95 ${isSelected
-                                                    ? 'bg-primary border-primary text-white shadow-xl shadow-primary/20'
-                                                    : 'bg-white border-slate-100 text-slate-600 hover:border-primary/30 hover:bg-slate-50'
+                                                className={`flex flex-row items-center justify-start gap-2 p-1.5 pr-3 rounded-full border transition-all duration-300 active:scale-95 ${isSelected
+                                                    ? 'bg-primary/5 border-primary text-primary shadow-sm'
+                                                    : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                                                     }`}
                                             >
-                                                <div className={`p-3 rounded-2xl transition-colors duration-300 ${isSelected ? 'bg-white/20' : 'bg-slate-50 group-hover:bg-primary/10'}`}>
-                                                    {React.cloneElement(Icon, { size: 24, className: isSelected ? 'text-white' : 'text-primary' })}
+                                                <div className={`p-2 rounded-full transition-colors duration-300 flex items-center justify-center shrink-0 ${isSelected ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'}`}>
+                                                    {React.cloneElement(Icon, { size: 14 })}
                                                 </div>
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-center leading-tight">{amenity}</span>
-
-                                                {isSelected && (
-                                                    <div className="absolute top-4 right-4 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-lg shadow-black/10">
-                                                        <Check size={12} className="text-primary" />
-                                                    </div>
-                                                )}
+                                                <span className="text-[9px] font-bold uppercase tracking-wider text-left leading-tight whitespace-nowrap">{amenity}</span>
                                             </button>
                                         );
                                     })}
@@ -1334,108 +1316,120 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                         )}
 
                         {/* Media Section */}
-                        <section className="pt-10 border-t border-slate-100">
+                        <section className="pt-3">
                             <div className="flex items-center gap-2 mb-6">
                                 <ImageIcon className="text-blue-500" size={18} />
                                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Media Assets</h3>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                {/* Poster & Photos */}
-                                <div className="space-y-6">
-                                    <div>
-                                        <div className="flex items-center justify-between mb-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Main Poster Photo</p>
-                                            <span className="text-[12px] font-bold text-slate-400 uppercase whitespace-pre">1280x720 (16:9) Size </span>
-                                        </div>
-                                        <div
-                                            onClick={() => posterRef.current?.click()}
-                                            className="h-40 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition-all overflow-hidden relative group"
-                                        >
-                                            <input type="file" ref={posterRef} className="hidden" onChange={(e) => handleFileChange(e, 'poster', 'media')} />
-                                            {formData.media.poster ? (
-                                                <img src={formData.media.poster} className="w-full h-full object-cover" alt="Poster" />
-                                            ) : (
-                                                <>
-                                                    <Camera size={24} className="text-slate-300 mb-2" />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Poster</span>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center justify-between mb-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Property Gallery (5-6 Photos)</p>
-                                            <span className="text-[12px] font-bold text-slate-400 uppercase whitespace-pre">
-                                                {"Minimum    5"}
-                                            </span>
-                                        </div>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            {formData.media.photos.map((img, i) => (
-                                                <div key={i} className="aspect-square rounded-xl bg-slate-100 overflow-hidden relative group">
-                                                    <img src={img} className="w-full h-full object-cover" />
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); handleChange('media', { ...formData.media, photos: formData.media.photos.filter((_, idx) => idx !== i) }); }}
-                                                        className="absolute top-1 right-1 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
-                                                        <Plus size={12} className="rotate-45" />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                            <div
-                                                onClick={() => photosRef.current?.click()}
-                                                className="aspect-square border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-50 text-slate-300 hover:text-primary transition-all"
-                                            >
-                                                <input type="file" ref={photosRef} className="hidden" multiple onChange={(e) => handleFileChange(e, 'photos', 'media', true)} />
-                                                <Plus size={20} />
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Poster Card */}
+                                <div className="p-4 border-2 border-slate-100 rounded-2xl bg-white hover:border-slate-200 transition-all flex flex-col gap-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center">
+                                                <ImageIcon size={12} className="text-blue-500" />
                                             </div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-700">Main Poster</p>
+                                        </div>
+                                        <span className="text-[9px] font-bold text-slate-400 uppercase">16:9</span>
+                                    </div>
+                                    <div
+                                        onClick={() => posterRef.current?.click()}
+                                        className="h-28 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-100 transition-all overflow-hidden relative group"
+                                    >
+                                        <input type="file" ref={posterRef} className="hidden" onChange={(e) => handleFileChange(e, 'poster', 'media')} />
+                                        {formData.media.poster ? (
+                                            <img src={formData.media.poster} className="w-full h-full object-cover" alt="Poster" />
+                                        ) : (
+                                            <>
+                                                <Camera size={16} className="text-slate-400 mb-1" />
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Upload</span>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Video Card */}
+                                <div className="p-4 border-2 border-slate-100 rounded-2xl bg-white hover:border-slate-200 transition-all flex flex-col gap-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-md bg-purple-50 flex items-center justify-center">
+                                                <Video size={12} className="text-purple-500" />
+                                            </div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-700">Property Video</p>
+                                        </div>
+                                        <span className="text-[9px] font-bold text-slate-400 uppercase">Max 20MB</span>
+                                    </div>
+                                    <div
+                                        onClick={() => videoRef.current?.click()}
+                                        className="h-28 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-100 transition-all overflow-hidden relative group"
+                                    >
+                                        <input type="file" ref={videoRef} className="hidden" accept="video/*" onChange={(e) => handleFileChange(e, 'video', 'media')} />
+                                        {formData.media.video ? (
+                                            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white">
+                                                <Play size={20} />
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <Play size={16} className="text-slate-400 mb-1" />
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Upload</span>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Video Consent */}
+                                <div
+                                    onClick={() => handleNestedChange('media', 'videoConsent', !formData.media.videoConsent)}
+                                    className="col-span-1 md:col-span-2 flex items-center gap-3 p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition-all border border-transparent hover:border-slate-100 group w-fit"
+                                >
+                                    <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all ${formData.media.videoConsent ? 'bg-primary' : 'bg-slate-200 group-hover:bg-primary/20'}`}>
+                                        <Check size={12} className={formData.media.videoConsent ? 'text-white' : 'text-transparent group-hover:text-primary'} />
+                                    </div>
+                                    <p className="text-[10px] font-bold text-slate-600">
+                                        I give permission to upload this video to the platform's YouTube Channel and all other Social Media platforms.
+                                    </p>
+                                </div>
+
+                                {/* Gallery Card */}
+                                <div className="p-4 border-2 border-slate-100 rounded-2xl bg-white hover:border-slate-200 transition-all flex flex-col gap-4 col-span-1 md:col-span-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center">
+                                                <ImageIcon size={12} className="text-blue-500" />
+                                            </div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-700">Property Gallery (Min 5)</p>
+                                        </div>
+                                        <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md uppercase">{formData.media.photos.length} Uploaded</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3">
+                                        {formData.media.photos.map((img, i) => (
+                                            <div key={i} className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden relative group shrink-0 shadow-sm border border-slate-200">
+                                                <img src={img} className="w-full h-full object-cover" />
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleChange('media', { ...formData.media, photos: formData.media.photos.filter((_, idx) => idx !== i) }); }}
+                                                    className="absolute top-1 right-1 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <Plus size={12} className="rotate-45" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        <div
+                                            onClick={() => photosRef.current?.click()}
+                                            className="w-20 h-20 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 text-slate-300 hover:text-primary transition-all shrink-0 bg-slate-50/50"
+                                        >
+                                            <input type="file" ref={photosRef} className="hidden" multiple onChange={(e) => handleFileChange(e, 'photos', 'media', true)} />
+                                            <Plus size={20} />
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Video & Consent */}
-                                <div className="space-y-6">
-                                    <div>
-                                        <div className="flex items-center justify-between mb-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Product Video</p>
-                                            <span className="text-[12px] font-bold text-slate-400 uppercase">Max 20MB | MP4</span>
-                                        </div>
-                                        <div
-                                            onClick={() => videoRef.current?.click()}
-                                            className="h-40 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition-all overflow-hidden relative group"
-                                        >
-                                            <input type="file" ref={videoRef} className="hidden" accept="video/*" onChange={(e) => handleFileChange(e, 'video', 'media')} />
-                                            {formData.media.video ? (
-                                                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white">
-                                                    <Play size={32} />
-                                                    <span className="text-[10px] font-black uppercase mt-2">Video Attached</span>
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <Video size={24} className="text-slate-300 mb-2" />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Upload Video</span>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div
-                                        onClick={() => handleNestedChange('media', 'videoConsent', !formData.media.videoConsent)}
-                                        className="p-4 rounded-2xl border border-slate-100 bg-slate-50/50 flex items-start gap-4 cursor-pointer hover:bg-white transition-all"
-                                    >
-                                        <div className={`mt-1 w-5 h-5 rounded-md border-2 shrink-0 flex items-center justify-center transition-all ${formData.media.videoConsent ? 'bg-primary border-primary' : 'bg-white border-slate-200'}`}>
-                                            {formData.media.videoConsent && <Check size={12} className="text-white" />}
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-bold text-slate-700 leading-relaxed">
-                                                I give consent and permission to upload this video in our YouTube Channel and all other Social Media platforms at no cost nor the benefit from Social Media platforms.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </section>
 
                         {/* FINAL STEP: Summary & Submission */}
-                        <div className="pt-10 border-t border-slate-100">
+                        <div className="pt-3 border-t border-slate-100">
                             <div className="p-6 rounded-[2rem] bg-slate-950 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-slate-200">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/20">
