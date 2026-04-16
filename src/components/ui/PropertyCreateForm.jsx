@@ -446,7 +446,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 <div className="flex items-center gap-2">
                                     <Award className="text-primary" size={18} />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Legal Advisor</h3>
-                                    {!isLegalExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
+                                    {!isLegalExpanded && <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest ml-2 bg-rose-50/50 px-2 py-0.5 rounded-md border border-rose-100/50">Required</span>}
                                 </div>
                                 <div className={`p-1.5 rounded-lg border transition-all ${isLegalExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
                                     <ChevronDown size={14} />
@@ -532,7 +532,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     <div className="flex items-center gap-2">
                                         <Briefcase className="text-blue-500" size={18} />
                                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Sales Department</h3>
-                                        {!isSalesExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>}
+                                        {!isSalesExpanded && <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-2 bg-slate-50/50 px-2 py-0.5 rounded-md border border-slate-100/50">Optional</span>}
                                     </div>
                                     <div className={`p-1.5 rounded-lg border transition-all ${isSalesExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
                                         <ChevronDown size={14} />
@@ -566,7 +566,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     <div className="flex items-center gap-2">
                                         <IndianRupee className="text-emerald-500" size={18} />
                                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Loan Department</h3>
-                                        {!isLoanExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>}
+                                        {!isLoanExpanded && <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-2 bg-slate-50/50 px-2 py-0.5 rounded-md border border-slate-100/50">Optional</span>}
                                     </div>
                                     <div className={`p-1.5 rounded-lg border transition-all ${isLoanExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
                                         <ChevronDown size={14} />
@@ -725,7 +725,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 <div className="flex items-center gap-2">
                                     <Building className="text-primary" size={18} />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Property Information</h3>
-                                    {!isPropertyInfoExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
+                                    {!isPropertyInfoExpanded && <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest ml-2 bg-rose-50/50 px-2 py-0.5 rounded-md border border-rose-100/50">Required</span>}
                                 </div>
                                 <div className={`p-1.5 rounded-lg border transition-all ${isPropertyInfoExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
                                     <ChevronDown size={14} />
@@ -798,7 +798,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                 <div className="flex items-center gap-2">
                                     <ShieldCheck className="text-emerald-500" size={18} />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">RERA & Approvals</h3>
-                                    {!isReraExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
+                                    {!isReraExpanded && <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest ml-2 bg-rose-50/50 px-2 py-0.5 rounded-md border border-rose-100/50">Required</span>}
                                 </div>
                                 <div className={`p-1.5 rounded-lg border transition-all ${isReraExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
                                     <ChevronDown size={14} />
@@ -1010,7 +1010,7 @@ export default function PropertyCreateForm({ initialData, onCancel, onSubmit }) 
                                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">
                                         {isStandalone ? 'Villa / House Specifications' : isLand ? 'Land Specifications' : isCommercial ? 'Commercial Specifications' : 'Building Specifications'}
                                     </h3>
-                                    {!isSpecsExpanded && <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-2 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>}
+                                    {!isSpecsExpanded && <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest ml-2 bg-rose-50/50 px-2 py-0.5 rounded-md border border-rose-100/50">Required</span>}
                                 </div>
                                 <div className={`p-1.5 rounded-lg border transition-all ${isSpecsExpanded ? 'bg-primary text-white border-primary rotate-180' : 'bg-white border-slate-200 text-slate-400 group-hover:border-primary/30 group-hover:text-primary'}`}>
                                     <ChevronDown size={14} />
