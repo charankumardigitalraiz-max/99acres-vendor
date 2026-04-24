@@ -182,9 +182,9 @@ const topUpBaseFeatures = [
   'Property Listing Upload',
   'Photo & Video Upload',
   'Standard Search Visibility',
-  'Direct Buyer Contact (Calls & Messages)',
-  'Basic Listing Analytics',
-  'Verified Seller Badge on Listing',
+  // 'Direct Buyer Contact (Calls & Messages)',
+  // 'Basic Listing Analytics',
+  // 'Verified Seller Badge on Listing',
 ];
 const topUpBaseNotIncluded = [
   'Featured / Priority Placement',
@@ -389,7 +389,8 @@ export const propertiesData = [
     bankerDetails: [
       { name: 'HDFC Bank (Ravi Kumar)', number: '+91 99887 77665' },
       { name: 'SBI Home Loans (Pooja Rao)', number: '+91 91234 56789' }
-    ]
+    ],
+    views: 12450
   },
   {
     id: 2,
@@ -450,7 +451,8 @@ export const propertiesData = [
       saleDeed: 'deed_456.pdf',
       encumbranceCert: 'ec_456.pdf',
       propertyTaxReceipt: 'tax_456.pdf'
-    }
+    },
+    views: 8920
   },
   {
     id: 3,
@@ -508,7 +510,8 @@ export const propertiesData = [
       saleDeed: 'comm_deed.pdf',
       encumbranceCert: 'comm_ec.pdf',
       propertyTaxReceipt: 'comm_tax.pdf'
-    }
+    },
+    views: 5640
   },
   {
     id: 4,
@@ -565,7 +568,8 @@ export const propertiesData = [
       saleDeed: 'plot_deed.pdf',
       encumbranceCert: 'plot_ec.pdf',
       propertyTaxReceipt: 'plot_tax.pdf'
-    }
+    },
+    views: 3120
   },
   {
     id: 5,
@@ -623,7 +627,8 @@ export const propertiesData = [
       saleDeed: 'pent_deed.pdf',
       encumbranceCert: 'pent_ec.pdf',
       propertyTaxReceipt: 'pent_tax.pdf'
-    }
+    },
+    views: 4280
   },
   {
     id: 6,
@@ -682,7 +687,8 @@ export const propertiesData = [
       saleDeed: 'villadeed_789.pdf',
       encumbranceCert: 'ec_789.pdf',
       propertyTaxReceipt: 'tax_789.pdf'
-    }
+    },
+    views: 15600
   }
 ];
 
@@ -981,4 +987,36 @@ export const bannersData = [
     platform: 'Mobile',
     date: '2024-03-15',
   },
+];
+
+// ─── Vendor Profile ─────────────────────────────────────────────────────────────
+export const vendorProfile = {
+  name: 'Sherla Rajesh',
+  email: 'rajesh.sherla@email.com',
+  phone: '+91 99887 76655',
+  role: 'Verified Vendor',
+  agencyName: 'Sherla Properties & Consultants',
+  joinedDate: '2023-06-20',
+  lastLogin: '2025-04-24 11:30 AM',
+  avatar: 'SR',
+  bio: 'Specializing in luxury residential properties and commercial plots across Mumbai and Pune. Committed to providing transparent and high-quality real estate services.',
+  address: '102, Business Bay, Andheri East, Mumbai, Maharashtra 400069',
+  website: 'www.sherlaproperties.com',
+  notifications: {
+    emailAlerts: true,
+    smsAlerts: true,
+    newLeadInquiry: true,
+    propertyViewed: true,
+    subscriptionRenewal: true,
+    marketUpdates: false,
+  },
+};
+
+export const vendorActivityLog = [
+  { id: 1, action: 'Posted new property', detail: '3BHK Modern Flat in Whitefield', time: '11:30 AM', date: 'Today' },
+  { id: 2, action: 'Updated pricing', detail: 'Palm Springs Villa — ₹12.5 Cr', time: '10:15 AM', date: 'Today' },
+  { id: 3, action: 'Responded to lead', detail: 'Amit Verma regarding Saket Retail Space', time: '09:00 AM', date: 'Today' },
+  { id: 4, action: 'Renewed subscription', detail: 'Premium Pack — 1 year', time: '05:20 PM', date: 'Yesterday' },
+  { id: 5, action: 'Uploaded documents', detail: 'Sale deed for Jubilee Hills Villa', time: '02:10 PM', date: 'Yesterday' },
+  { id: 6, action: 'Profile updated', detail: 'Updated agency bio and contact info', time: '11:00 AM', date: '22 Apr' },
 ];

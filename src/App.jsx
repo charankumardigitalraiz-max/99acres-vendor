@@ -11,7 +11,7 @@ import Products from './pages/Products';
 import ProductDetails from './pages/ProductDetails';
 import PropertyDetails from './pages/PropertyDetails';
 import Reports from './pages/Reports';
-import AdminProfile from './pages/AdminProfile';
+import VendorProfile from './pages/VendorProfile';
 import Categories from './pages/Categories';
 import Support from './pages/Support';
 import TicketDetails from './pages/TicketDetails';
@@ -44,7 +44,7 @@ export default function App() {
             <Route path="properties/:id" element={<PropertyDetails />} />
             <Route path="create-property" element={<CreateProperty />} />
             <Route path="reports" element={<Reports />} />
-            <Route path="profile" element={<AdminProfile />} />
+            <Route path="profile" element={<VendorProfile />} />
             <Route path="support" element={<Support />} />
             <Route path="support/:id" element={<TicketDetails />} />
             <Route path="banners" element={<Banners />} />

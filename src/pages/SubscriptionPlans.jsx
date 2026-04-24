@@ -146,7 +146,7 @@ export default function SubscriptionPlans() {
               <button
                 onClick={() => setSelectedPlan(plan)}
                 disabled={plan.name === 'Standard Seller'}
-                className={`w-full py-5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${plan.name === 'Standard Seller'
+                className={`w-full py-3 rounded-[1rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${plan.name === 'Standard Seller'
                   ? 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed shadow-inner'
                   : isPopular
                     ? 'bg-primary text-white shadow-xl shadow-primary/30 hover:bg-slate-900 border-none'
@@ -296,21 +296,21 @@ export default function SubscriptionPlans() {
                   </div>
                 ))}
 
-                {tp.notIncluded?.map((f, i) => (
+                {/* {tp.notIncluded?.map((f, i) => (
                   <div key={i} className="flex items-start gap-4 opacity-40 grayscale group/item hover:opacity-100 hover:grayscale-0 transition-all">
                     <div className="w-5 h-5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <X size={10} className="text-slate-400" strokeWidth={4} />
                     </div>
                     <span className="text-xs font-bold text-slate-400 line-through leading-tight">{f}</span>
                   </div>
-                ))}
+                ))} */}
               </div>
 
               {/* CTA — same style as seller plan button */}
               <button
                 onClick={() => setSelectedTopUp(tp)}
-                className={`w-full py-5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${tp.highlight
-                  ? 'bg-primary text-white shadow-xl shadow-primary/30 hover:bg-slate-900'
+                className={`w-full py-3 rounded-[1rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${tp.highlight
+                  ? 'bg-primary text-white shadow-xl shadow-primary/30 '
                   : 'bg-primary text-white border border-slate-200 hover:border-primary/30 shadow-sm hover:shadow-md'
                   }`}
               >
@@ -321,7 +321,7 @@ export default function SubscriptionPlans() {
         </div>
 
         {/* Info strip */}
-        <div className="mt-6 flex flex-wrap items-center gap-6 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
+        {/* <div className="mt-6 flex flex-wrap items-center gap-6 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
               <ShieldCheck size={14} className="text-emerald-500" />
@@ -349,7 +349,7 @@ export default function SubscriptionPlans() {
               <p className="text-[9px] text-slate-400">Buy multiple packs to extend your reach</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* ── Subscription History Ledger ── */}

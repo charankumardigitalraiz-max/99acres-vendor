@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Bell, Search, Menu, ChevronDown, User, Shield, LogOut, Settings, Calendar, MapPin, Users, Building2, CreditCard } from 'lucide-react';
 import { clearNotifications } from '../../features/ui/uiSlice';
-import { adminProfile } from '../../data/mockData';
+import { vendorProfile } from '../../data/mockData';
 import Modal from '../ui/Modal';
 import Avatar from '../ui/Avatar';
 
@@ -14,7 +14,7 @@ const routeLabels = {
   '/subscribers': 'Subscribers',
   '/products': 'Properties',
   '/reports': 'Reports',
-  '/profile': 'Admin Profile',
+  '/profile': 'Vendor Profile',
 };
 
 export default function Topbar() {
@@ -158,11 +158,11 @@ export default function Topbar() {
             className="flex items-center gap-2 py-1.5 px-2.5 rounded-lg hover:bg-slate-100 transition-colors border border-transparent hover:border-border"
           >
             <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shadow-sm">
-              <span className="text-white text-2xs font-semibold">{adminProfile.avatar}</span>
+              <span className="text-white text-2xs font-semibold">{vendorProfile.avatar}</span>
             </div>
             <div className="hidden md:block text-left">
-              <p className="text-xs font-semibold text-slate-700 leading-tight">{adminProfile.name}</p>
-              <p className="text-[10px] text-slate-400 leading-tight font-medium uppercase tracking-wider">Seller</p>
+              <p className="text-xs font-semibold text-slate-700 leading-tight">{vendorProfile.name}</p>
+              <p className="text-[10px] text-slate-400 leading-tight font-medium uppercase tracking-wider">Vendor</p>
             </div>
             <ChevronDown size={12} className={`text-slate-400 hidden md:block transition-transform duration-200 ${isProfileModalOpen ? 'rotate-180' : ''}`} />
           </button>
@@ -174,16 +174,16 @@ export default function Topbar() {
                 {/* 1. Profile header */}
                 <div className="bg-slate-50 rounded-xl p-4 border border-border flex flex-col items-center text-center">
                   <div className="relative mb-3">
-                    <Avatar initials={adminProfile.avatar} size="lg" />
+                    <Avatar initials={vendorProfile.avatar} size="lg" />
                     <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
                       <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                     </div>
                   </div>
-                  <h3 className="text-sm font-bold text-slate-800">{adminProfile.name}</h3>
-                  <p className="text-[11px] text-slate-500">{adminProfile.email}</p>
+                  <h3 className="text-sm font-bold text-slate-800">{vendorProfile.name}</h3>
+                  <p className="text-[11px] text-slate-500">{vendorProfile.email}</p>
                   <div className="flex items-center gap-1.5 mt-3 bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/10">
                     <Shield size={11} className="flex-shrink-0" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider">Seller</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Verified Vendor</span>
                   </div>
                 </div>
 

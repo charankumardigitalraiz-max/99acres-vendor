@@ -8,6 +8,7 @@ const iconMap = {
   chart: BarChart3,
   message: MessageCircle,
   staff: UserCog,
+  'trending-up': TrendingUp,
 };
 
 const colorMap = {
