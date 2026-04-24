@@ -13,6 +13,8 @@ export default function Banners() {
     const [selectedBanner, setSelectedBanner] = useState(null);
     const [fileError, setFileError] = useState('');
     const [slotType, setSlotType] = useState('Weekly');
+    const [positionType, setPositionType] = useState("");
+
 
     const filteredBanners = banners.filter(b => {
         const matchesSearch = b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -314,15 +316,27 @@ export default function Banners() {
                                 placeholder={null}
                             />
                         </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <Select
+                                label="Position"
+                                value={selectedBanner?.position || 'Top'}
+                                onChange={e => setPositionType(e.target.value)}
+                                options={[
+                                    { value: 'Top', label: 'Top' },
+                                    { value: 'Middle', label: 'Middle' },
+                                    { value: 'Bottom', label: 'Bottom' }
+                                ]}
+                                placeholder={null}
+                            />
+                            <Select
+                                label="Status"
+                                value={selectedBanner?.status || 'Active'}
+                                onChange={e => setSelectedBanner(prev => ({ ...prev, status: e.target.value }))}
 
-                        <Select
-                            label="Status"
-                            value={selectedBanner?.status || 'Active'}
-                            onChange={e => setSelectedBanner(prev => ({ ...prev, status: e.target.value }))}
-                            options={['Active', 'Inactive']}
-                            placeholder={null}
-                        />
-
+                                options={['Active', 'Inactive']}
+                                placeholder={null}
+                            />
+                        </div>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <label className="form-label !mb-0 text-slate-900">Select Booking Slot</label>
@@ -343,38 +357,38 @@ export default function Banners() {
                                     </button> */}
                                 </div>
                             </div>
+                            {selectedBanner?.platform && positionType && selectedBanner?.platform && (
+                                <div className="grid grid-cols-2 gap-3 max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {generateSlots().map((slot) => {
+                                        const status = getOccupancyStatus(slot.occupancy);
+                                        const isSelected = selectedBanner?.startDate === slot.start && selectedBanner?.endDate === slot.end;
+                                        const isFull = slot.occupancy >= 5;
 
-                            <div className="grid grid-cols-2 gap-3 max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
-                                {generateSlots().map((slot) => {
-                                    const status = getOccupancyStatus(slot.occupancy);
-                                    const isSelected = selectedBanner?.startDate === slot.start && selectedBanner?.endDate === slot.end;
-                                    const isFull = slot.occupancy >= 5;
-
-                                    return (
-                                        <button
-                                            key={slot.id}
-                                            type="button"
-                                            disabled={isFull && !isSelected}
-                                            onClick={() => setSelectedBanner(prev => ({ ...prev, startDate: slot.start, endDate: slot.end }))}
-                                            className={`flex flex-col p-3 rounded-xl border-2 text-left transition-all relative ${isSelected ? 'border-primary bg-primary/5' : isFull ? 'border-red-100 bg-slate-50 opacity-60 grayscale cursor-not-allowed' : 'border-slate-100 bg-white hover:border-slate-200 cursor-pointer'}`}
-                                        >
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className={`text-[9px] font-black uppercase tracking-widest ${isSelected ? 'text-primary' : 'text-slate-600'}`}>{slot.label}</span>
-                                                <Badge variant={status.badge} className="text-[7px] px-1 py-0">{slot.occupancy}/5</Badge>
-                                            </div>
-                                            <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-400 uppercase tracking-widest">
-                                                <Calendar size={10} />
-                                                {slot.start.split('-').slice(1).join('/')} - {slot.end.split('-').slice(1).join('/')}
-                                            </div>
-                                            <div className="mt-3 flex items-center justify-between">
-                                                <span className={`text-[8px] font-black uppercase tracking-widest ${status.color}`}>{status.label}</span>
-                                                {isSelected && <CheckCircle2 size={12} className="text-primary" />}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
+                                        return (
+                                            <button
+                                                key={slot.id}
+                                                type="button"
+                                                disabled={isFull && !isSelected}
+                                                onClick={() => setSelectedBanner(prev => ({ ...prev, startDate: slot.start, endDate: slot.end }))}
+                                                className={`flex flex-col p-3 rounded-xl border-2 text-left transition-all relative ${isSelected ? 'border-primary bg-primary/5' : isFull ? 'border-red-100 bg-slate-50 opacity-60 grayscale cursor-not-allowed' : 'border-slate-100 bg-white hover:border-slate-200 cursor-pointer'}`}
+                                            >
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className={`text-[9px] font-black uppercase tracking-widest ${isSelected ? 'text-primary' : 'text-slate-600'}`}>{slot.label}</span>
+                                                    <Badge variant={status.badge} className="text-[7px] px-1 py-0">{slot.occupancy}/5</Badge>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-400 uppercase tracking-widest">
+                                                    <Calendar size={10} />
+                                                    {slot.start.split('-').slice(1).join('/')} - {slot.end.split('-').slice(1).join('/')}
+                                                </div>
+                                                <div className="mt-3 flex items-center justify-between">
+                                                    <span className={`text-[8px] font-black uppercase tracking-widest ${status.color}`}>{status.label}</span>
+                                                    {isSelected && <CheckCircle2 size={12} className="text-primary" />}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
                             {/* Selection Summary */}
                             {selectedBanner?.startDate && (
                                 <div className="p-4 bg-primary/5 rounded-2xl border border-primary/20 border-dashed animate-in fade-in slide-in-from-bottom-2">
